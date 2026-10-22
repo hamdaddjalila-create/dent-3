@@ -101,7 +101,6 @@
 
       <!-- 1. AGENDA MENSUEL & RDV -->
       <div x-show="activeTab === 'agenda'" class="space-y-6">
-        <!-- RENDER AGENDA MENSUEL -->
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="font-bold text-slate-200 text-base flex items-center gap-2">
@@ -170,7 +169,6 @@
                     <td class="p-3 text-slate-300" x-text="app.treatment"></td>
                     <td class="p-3 font-bold text-emerald-400 font-mono" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
                     <td class="p-3 text-center space-x-1.5 whitespace-nowrap">
-                      <!-- ZER NAQL PATIENT ILA DOSSIER -->
                       <button @click="convertToPatientDossier(app)" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-solid fa-user-check"></i> Convertir en dossier
                       </button>
@@ -245,7 +243,6 @@
       <!-- 3. FINANCES & MDA3IL -->
       <div x-show="activeTab === 'finances' && userRole === 'doctor'" x-cloak class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- MDA3IL AL YAWM -->
           <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
             <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Mda3il du Jour (Calcul Automatique)</p>
@@ -253,7 +250,6 @@
             <p class="text-[11px] text-slate-500 mt-1">Calculé à partir des tranches payées aujourd'hui</p>
           </div>
 
-          <!-- TOTAL GENERAL DES MDA3IL -->
           <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
             <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Mda3il Global</p>
@@ -262,7 +258,6 @@
           </div>
         </div>
 
-        <!-- LISTE GLOBALE DES TRANCHES PAYEES -->
         <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl p-5 space-y-3">
           <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2">
             <i class="fa-solid fa-receipt text-teal-400"></i> Historique Global des Tranches Encaissées
@@ -292,7 +287,7 @@
         </div>
       </div>
 
-      <!-- 4. MESSAGERIE INTERNE (SON D'ALERTE, MODIFICATION ET SUPPRESSION) -->
+      <!-- 4. MESSAGERIE INTERNE -->
       <div x-show="activeTab === 'chat'" x-cloak class="space-y-4">
         <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden flex flex-col h-[560px] shadow-2xl">
           <div class="bg-slate-800/80 border-b border-slate-800 p-4 font-bold text-sm text-slate-200 flex items-center justify-between">
@@ -310,7 +305,6 @@
                   </div>
                   <p class="font-medium whitespace-pre-wrap text-xs" x-text="msg.text"></p>
                   
-                  <!-- ACTIONS MODIFIER / SUPPRIMER -->
                   <template x-if="msg.senderEmail === userEmail">
                     <div class="flex justify-end gap-2 text-[10px] pt-1 border-t border-slate-950/10">
                       <button @click="editChatMessage(msg)" class="hover:underline opacity-80"><i class="fa-solid fa-pen"></i> Modifier</button>
@@ -375,7 +369,7 @@
     </div>
   </div>
 
-  <!-- MODAL TRANCHES DE PAIEMENT POUR UN PATIENT -->
+  <!-- MODAL TRANCHES DE PAIEMENT -->
   <div x-show="showTrancheModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-lg p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -385,7 +379,6 @@
         <button @click="showTrancheModal = false" class="text-slate-500 hover:text-slate-300 font-bold"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- INFOS PATIENT & RESUME -->
       <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-800 space-y-2">
         <p class="font-bold text-slate-200">Patient: <span class="text-teal-400" x-text="selectedPatient.name"></span></p>
         <div class="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1 border-t border-slate-800">
@@ -395,7 +388,6 @@
         </div>
       </div>
 
-      <!-- FORMULAIRE AJOUTER UNE TRANCHE -->
       <form @submit.prevent="addTrancheForPatient()" class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800/80 space-y-3">
         <h4 class="font-bold text-slate-300">Ajouter une nouvelle tranche payée</h4>
         <div class="grid grid-cols-2 gap-2">
@@ -413,7 +405,6 @@
         </button>
       </form>
 
-      <!-- HISTORIQUE DES TRANCHES DU PATIENT -->
       <div class="space-y-2">
         <h4 class="font-bold text-slate-400">Historique des tranches versées</h4>
         <div class="border border-slate-800 rounded-xl overflow-hidden">
@@ -444,11 +435,10 @@
           </table>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- MODAL AJOUT / EDIT PATIENT -->
+  <!-- MODAL PATIENT -->
   <div x-show="showPatientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
       <h3 class="font-bold text-sm text-slate-100" x-text="editingPatientId ? 'Modifier Dossier Patient' : 'Nouveau Dossier Patient'"></h3>
@@ -475,7 +465,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT FIREBASE MODULE -->
+  <!-- SCRIPT FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -500,7 +490,7 @@
     window.firebaseService = { auth, db, signInWithEmailAndPassword, signOut, onAuthStateChanged, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot };
   </script>
 
-  <!-- LOGIQUE APPLICATIVE ALPINEJS -->
+  <!-- LOGIQUE ALPINEJS -->
   <script>
     function dentalApp() {
       return {
@@ -578,7 +568,7 @@
           await window.firebaseService.signOut(window.firebaseService.auth);
         },
 
-       playNotificationSound() {
+        playNotificationSound() {
           try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator();
@@ -592,7 +582,8 @@
             osc.stop(ctx.currentTime + 0.25);
           } catch(e){}
         },
-loadCloudData() {
+
+        loadCloudData() {
           const { db, collection, onSnapshot } = window.firebaseService;
           onSnapshot(collection(db, "cabinet_patients"), snap => this.patients = snap.docs.map(d => ({ id: d.id, ...d.data() })));
           onSnapshot(collection(db, "cabinet_appointments"), snap => this.appointments = snap.docs.map(d => ({ id: d.id, ...d.data() })));
@@ -612,7 +603,6 @@ loadCloudData() {
           });
         },
 
-        // LOGIQUE AGENDA MENSUEL
         get currentMonthName() {
           return new Date(this.currentYear, this.currentMonth).toLocaleString('fr-FR', { month: 'long' }).toUpperCase();
         },
@@ -643,7 +633,6 @@ loadCloudData() {
         getAppointmentsForDate(d) { return this.appointments.filter(a => a.date === d); },
         get selectedDateAppointments() { return this.appointments.filter(a => a.date === this.selectedDate); },
 
-        // TRANSFERT D'UN RDV EN DOSSIER PATIENT
         async convertToPatientDossier(app) {
           const { db, collection, addDoc } = window.firebaseService;
           await addDoc(collection(db, "cabinet_patients"), {
@@ -655,7 +644,6 @@ loadCloudData() {
           alert(`Le RDV de ${app.patientName} a été transféré vers la liste des dossiers patients avec succès !`);
         },
 
-        // LOGIQUE TRANCHES DE PAIEMENT
         get filteredPatients() { return this.patients.filter(p => (p.name || '').toLowerCase().includes(this.patientSearch.toLowerCase())); },
         getPatientTotalPaid(patientId) {
           return this.tranches.filter(t => t.patientId === patientId).reduce((s,t) => s + (Number(t.amount)||0), 0);
@@ -685,7 +673,6 @@ loadCloudData() {
           this.trancheForm = { amount: 0, note: '' };
         },
 
-        // CALCUL DE MDA3IL DU JOUR AUTOMATIQUE
         get todayRevenue() {
           const t = new Date().toISOString().split('T')[0];
           return this.tranches.filter(tr => tr.date === t).reduce((s,tr) => s + (Number(tr.amount)||0), 0);
@@ -694,7 +681,6 @@ loadCloudData() {
           return this.tranches.reduce((s,tr) => s + (Number(tr.amount)||0), 0);
         },
 
-        // WHATSAPP
         getWhatsAppLink(app) {
           let phoneClean = (app.phone || '').replace(/[^0-9]/g, '');
           if (phoneClean.startsWith('0')) phoneClean = '+213' + phoneClean.substring(1);
@@ -702,7 +688,6 @@ loadCloudData() {
           return `https://wa.me/${phoneClean}?text=${msg}`;
         },
 
-        // MODALS ACTIONS
         openPatientModal() {
           this.editingPatientId = null;
           this.patientForm = { name: '', phone: '', totalAmount: 0, diagnosis: '' };
@@ -745,7 +730,6 @@ loadCloudData() {
           }
         },
 
-        // CHAT ACTIONS
         async sendChatMessage() {
           if (!this.chatInput.trim()) return;
           const { db, collection, addDoc, doc, updateDoc } = window.firebaseService;
@@ -772,3 +756,4 @@ loadCloudData() {
   </script>
 </body>
 </html>
+
