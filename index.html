@@ -484,12 +484,14 @@
     import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // ⚠️ ضع مفاتيح الفايربيس الجديدة للعيادة الثانية هنا
-    const firebaseConfig = {
-      apiKey: "ضع_المفتاح_الجديد_هنا",
-      authDomain: "مشروعك_الثاني.firebaseapp.com",
-      projectId: "مشروعك_الثاني",
-      storageBucket: "مشروعك_الثاني.firebasestorage.app"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyAA_WirY8W2AXOyz3JD4UKdu-GqNXHniRc",
+  authDomain: "dent-3.firebaseapp.com",
+  projectId: "dent-3",
+  storageBucket: "dent-3.firebasestorage.app",
+  messagingSenderId: "1031127135097",
+  appId: "1:1031127135097:web:cc7c268e0302097c0c75a8",
+  measurementId: "G-LW42MPK6FJ"
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
