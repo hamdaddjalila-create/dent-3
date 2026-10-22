@@ -15,7 +15,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col" x-data="dentalApp()" x-init="initApp()">
 
-  <!-- SCREEN 1: LOGIN FORM (If not authenticated) -->
+  <!-- SCREEN 1: LOGIN FORM -->
   <div x-show="!isAuthenticated" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-md p-4">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-6 border border-slate-200">
       <div class="text-center space-y-2">
@@ -26,7 +26,6 @@
         <p class="text-xs text-slate-500 font-semibold">Veuillez vous connecter à votre compte</p>
       </div>
 
-      <!-- Login Form -->
       <form @submit.prevent="login()" class="space-y-4 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Adresse Email</label>
@@ -54,9 +53,8 @@
     </div>
   </div>
 
-  <!-- SCREEN 2: MAIN DASHBOARD (If authenticated) -->
+  <!-- SCREEN 2: MAIN DASHBOARD -->
   <div x-show="isAuthenticated" x-cloak class="flex-1 flex flex-col">
-    <!-- TOPBAR -->
     <header class="bg-indigo-900 text-white shadow-lg sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -69,19 +67,17 @@
           </div>
         </div>
 
-        <button @click="logout()" class="bg-red-500/20 hover:bg-red-500/40 text-red-200 border border-red-400/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+        <button @click="logout()" class="bg-red-500/25 hover:bg-red-500/40 text-red-100 border border-red-400/30 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
           <i class="fa-solid fa-power-off"></i> Déconnexion
         </button>
       </div>
     </header>
 
-    <!-- NAVIGATION TABS -->
     <nav class="bg-white border-b border-slate-200 shadow-sm">
       <div class="max-w-7xl mx-auto px-4 flex space-x-2 overflow-x-auto text-xs font-bold py-2">
         <button @click="activeTab = 'agenda'" :class="activeTab === 'agenda' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-xl transition whitespace-nowrap"><i class="fa-solid fa-calendar-days me-1.5"></i> Agenda & Rendez-vous</button>
         <button @click="activeTab = 'patients'" :class="activeTab === 'patients' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-xl transition whitespace-nowrap"><i class="fa-solid fa-users me-1.5"></i> Dossiers Patients</button>
         
-        <!-- Doctor Only Tabs -->
         <template x-if="userRole === 'doctor'">
           <button @click="activeTab = 'finances'" :class="activeTab === 'finances' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-4 py-2 rounded-xl transition whitespace-nowrap"><i class="fa-solid fa-wallet me-1.5"></i> Revenus & Versements</button>
         </template>
@@ -92,7 +88,6 @@
       </div>
     </nav>
 
-    <!-- MAIN CONTENT AREA -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
       <!-- TAB 1: AGENDA -->
@@ -162,7 +157,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: FINANCES (Doctor Only) -->
+      <!-- TAB 3: FINANCES -->
       <div x-show="activeTab === 'finances' && userRole === 'doctor'" x-cloak class="space-y-6">
         <div class="grid grid-cols-2 gap-4">
           <div class="bg-white p-4 rounded-2xl shadow-sm border">
@@ -203,7 +198,7 @@
       <!-- TAB 4: CHAT -->
       <div x-show="activeTab === 'chat'" x-cloak class="space-y-4">
         <div class="bg-white rounded-2xl shadow-sm border overflow-hidden flex flex-col h-[500px]">
-          <div class="bg-indigo-900 text-white p-3 font-bold text-sm">Messagerie Interne avec Alerte Sonore</div>
+          <div class="bg-indigo-900 text-white p-3 font-bold text-sm">Messagerie Interne</div>
           <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50">
             <template x-for="msg in chatMessages" :key="msg.id">
               <div :class="msg.senderEmail === userEmail ? 'flex justify-end' : 'flex justify-start'">
@@ -227,7 +222,102 @@
     </main>
   </div>
 
-  <!-- FIREBASE AUTH & FIRESTORE SCRIPT -->
+  <!-- MODALS -->
+  <div x-show="showPatientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 space-y-3 text-xs">
+      <h3 class="font-bold text-sm text-slate-800" x-text="editingPatientId ? 'Modifier le Patient' : 'Nouveau Patient'"></h3>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Nom complet</label>
+        <input type="text" x-model="patientForm.name" required class="w-full p-2 bg-slate-50 border rounded-lg">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Téléphone</label>
+          <input type="text" x-model="patientForm.phone" class="w-full p-2 bg-slate-50 border rounded-lg">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Âge</label>
+          <input type="number" x-model="patientForm.age" class="w-full p-2 bg-slate-50 border rounded-lg">
+        </div>
+      </div>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Diagnostic</label>
+        <textarea x-model="patientForm.diagnosis" rows="2" class="w-full p-2 bg-slate-50 border rounded-lg"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" @click="showPatientModal = false" class="px-4 py-2 bg-slate-100 rounded-lg font-bold">Annuler</button>
+        <button type="button" @click="savePatient()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <div x-show="showAppointmentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 space-y-3 text-xs">
+      <h3 class="font-bold text-sm text-slate-800" x-text="editingAppointmentId ? 'Modifier le RDV' : 'Nouveau RDV'"></h3>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Patient</label>
+        <select x-model="appointmentForm.patientName" @change="updatePhoneFromPatient()" required class="w-full p-2 bg-slate-50 border rounded-lg">
+          <option value="">Sélectionner...</option>
+          <template x-for="p in patients" :key="p.id"><option :value="p.name" x-text="p.name"></option></template>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Date</label>
+          <input type="date" x-model="appointmentForm.date" required class="w-full p-2 bg-slate-50 border rounded-lg">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Heure</label>
+          <input type="time" x-model="appointmentForm.time" required class="w-full p-2 bg-slate-50 border rounded-lg">
+        </div>
+      </div>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Soin</label>
+        <input type="text" x-model="appointmentForm.treatment" required class="w-full p-2 bg-slate-50 border rounded-lg">
+      </div>
+      <div x-show="userRole === 'doctor'">
+        <label class="block font-bold text-slate-700 mb-1">Coût (DZD)</label>
+        <input type="number" x-model.number="appointmentForm.cost" class="w-full p-2 bg-slate-50 border rounded-lg">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" @click="showAppointmentModal = false" class="px-4 py-2 bg-slate-100 rounded-lg font-bold">Annuler</button>
+        <button type="button" @click="saveAppointment()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <div x-show="showPaymentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 space-y-3 text-xs">
+      <h3 class="font-bold text-sm text-slate-800">Enregistrer un Versement</h3>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Patient</label>
+        <select x-model="paymentForm.patientName" required class="w-full p-2 bg-slate-50 border rounded-lg">
+          <option value="">Sélectionner...</option>
+          <template x-for="p in patients" :key="p.id"><option :value="p.name" x-text="p.name"></option></template>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Montant</label>
+          <input type="number" x-model.number="paymentForm.amount" required class="w-full p-2 bg-slate-50 border rounded-lg">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Date</label>
+          <input type="date" x-model="paymentForm.date" required class="w-full p-2 bg-slate-50 border rounded-lg">
+        </div>
+      </div>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Notes</label>
+        <input type="text" x-model="paymentForm.note" class="w-full p-2 bg-slate-50 border rounded-lg">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" @click="showPaymentModal = false" class="px-4 py-2 bg-slate-100 rounded-lg font-bold">Annuler</button>
+        <button type="button" @click="savePayment()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -257,13 +347,21 @@
         isLoading: false,
         authError: '',
         userEmail: '',
-        userRole: 'assistant', // 'doctor' or 'assistant'
+        userRole: 'assistant',
 
         loginEmail: '',
         loginPassword: '',
 
         activeTab: 'agenda',
         patientSearch: '',
+
+        showPatientModal: false,
+        showAppointmentModal: false,
+        showPaymentModal: false,
+
+        editingPatientId: null,
+        editingAppointmentId: null,
+
         patientForm: { name: '', phone: '', age: '', diagnosis: '' },
         appointmentForm: { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 2000 },
         paymentForm: { patientName: '', amount: 0, date: new Date().toISOString().split('T')[0], note: '' },
@@ -289,12 +387,7 @@
             if (user) {
               this.isAuthenticated = true;
               this.userEmail = user.email;
-              // Determine role based on email address
-              if (user.email.includes('medecin') || user.email.includes('doctor')) {
-                this.userRole = 'doctor';
-              } else {
-                this.userRole = 'assistant';
-              }
+              this.userRole = (user.email.includes('medecin') || user.email.includes('doctor')) ? 'doctor' : 'assistant';
               this.loadCloudData();
             } else {
               this.isAuthenticated = false;
@@ -305,9 +398,8 @@
         async login() {
           this.isLoading = true;
           this.authError = '';
-          const { auth, signInWithEmailAndPassword } = window.firebaseService;
           try {
-            await signInWithEmailAndPassword(auth, this.loginEmail, this.loginPassword);
+            await window.firebaseService.signInWithEmailAndPassword(window.firebaseService.auth, this.loginEmail, this.loginPassword);
           } catch (err) {
             this.authError = "Email ou mot de passe incorrect.";
           } finally {
@@ -336,8 +428,69 @@
         getWhatsAppLink(app) {
           let phoneClean = (app.phone || '').replace(/[^0-9]/g, '');
           if (phoneClean.startsWith('0')) phoneClean = '+213' + phoneClean.substring(1);
-          const msg = encodeURIComponent(`Bonjour ${app.patientName}, rappel de votre RDV dentaire le ${app.date} à ${app.time}. Cabinet Dentaire.`);
+          const msg = encodeURIComponent(`Bonjour ${app.patientName}, rappel de votre RDV dentaire le ${app.date} à ${app.time}.`);
           return `https://wa.me/${phoneClean}?text=${msg}`;
+        },
+
+        updatePhoneFromPatient() {
+          const found = this.patients.find(p => p.name === this.appointmentForm.patientName);
+          if (found) this.appointmentForm.phone = found.phone || '';
+        },
+
+        openPatientModal() {
+          this.editingPatientId = null;
+          this.patientForm = { name: '', phone: '', age: '', diagnosis: '' };
+          this.showPatientModal = true;
+        },
+        editPatient(p) {
+          this.editingPatientId = p.id;
+          this.patientForm = { ...p };
+          this.showPatientModal = true;
+        },
+        async savePatient() {
+          const { db, collection, addDoc, doc, updateDoc } = window.firebaseService;
+          if (this.editingPatientId) {
+            await updateDoc(doc(db, "cabinet_patients", this.editingPatientId), this.patientForm);
+          } else {
+            await addDoc(collection(db, "cabinet_patients"), this.patientForm);
+          }
+          this.showPatientModal = false;
+        },
+
+        openAppointmentModal() {
+          this.editingAppointmentId = null;
+          this.appointmentForm = { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 2000 };
+          this.showAppointmentModal = true;
+        },
+        openAppointmentModalForPatient(p) {
+          this.openAppointmentModal();
+          this.appointmentForm.patientName = p.name;
+          this.appointmentForm.phone = p.phone || '';
+        },
+        editAppointment(app) {
+          this.editingAppointmentId = app.id;
+          this.appointmentForm = { ...app };
+          this.showAppointmentModal = true;
+        },
+        async saveAppointment() {
+          const { db, collection, addDoc, doc, updateDoc } = window.firebaseService;
+          if (this.editingAppointmentId) {
+            await updateDoc(doc(db, "cabinet_appointments", this.editingAppointmentId), this.appointmentForm);
+          } else {
+            await addDoc(collection(db, "cabinet_appointments"), this.appointmentForm);
+          }
+          this.showAppointmentModal = false;
+        },
+
+        openPaymentModal() {
+          this.paymentForm = { patientName: '', amount: 0, date: new Date().toISOString().split('T')[0], note: '' };
+          this.showPaymentModal = true;
+        },
+        async savePayment() {
+          const { db, collection, addDoc } = window.firebaseService;
+          const timeStr = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          await addDoc(collection(db, "cabinet_payments"), { ...this.paymentForm, dateTime: `${this.paymentForm.date} à ${timeStr}`, timestamp: Date.now() });
+          this.showPaymentModal = false;
         },
 
         async sendChatMessage() {
@@ -353,7 +506,9 @@
         },
 
         async deleteRecord(col, id) {
-          if (confirm("Supprimer ?")) await window.firebaseService.deleteDoc(window.firebaseService.doc(window.firebaseService.db, 'cabinet_' + col, id));
+          if (confirm("Supprimer ?")) {
+            await window.firebaseService.deleteDoc(window.firebaseService.doc(window.firebaseService.db, 'cabinet_' + col, id));
+          }
         },
 
         formatMoney(amt) { return new Intl.NumberFormat('fr-FR').format(amt || 0); }
