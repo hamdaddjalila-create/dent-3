@@ -138,7 +138,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-50 text-slate-500 font-bold border-b">
-              <tr><th class="p-3">Nom</th><th class="p-3">Téléphone</th><th class="p-3">Âge</th><th class="p-3">Diagnostic</th><th class="p-3 text-center">Actions</th></tr>
+              <tr><th class="p-3">Nom</th><th class="p-3">Téléphone</th><th class="p-3">Âge</th><th class="p-3">Diagnostic</th><th class="p-3 text-center">Historique & Actions</th></tr>
             </thead>
             <tbody class="divide-y">
               <template x-for="p in filteredPatients" :key="p.id">
@@ -148,6 +148,8 @@
                   <td class="p-3" x-text="p.age"></td>
                   <td class="p-3 text-slate-500" x-text="p.diagnosis"></td>
                   <td class="p-3 text-center space-x-2">
+                    <!-- Historique Button -->
+                    <button @click="openPatientHistory(p)" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold inline-flex items-center gap-1"><i class="fa-solid fa-clock-rotate-left"></i> Historique</button>
                     <button @click="openAppointmentModalForPatient(p)" class="text-indigo-600 font-bold">RDV</button>
                     <button @click="editPatient(p)" class="text-blue-600"><i class="fa-solid fa-pen"></i></button>
                     <button @click="deleteRecord('patients', p.id)" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
@@ -224,8 +226,81 @@
     </main>
   </div>
 
+  <!-- MODAL: PATIENT HISTORY (ISSTORIQUE DU PATIENT) -->
+  <div x-show="showHistoryModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b pb-3">
+        <div>
+          <h3 class="font-bold text-base text-indigo-900 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left"></i> Historique du Patient
+          </h3>
+          <p class="text-slate-500 text-xs mt-0.5" x-text="'Patient : ' + (selectedPatient.name || '')"></p>
+        </div>
+        <button @click="showHistoryModal = false" class="text-slate-400 hover:text-slate-600 text-base font-bold"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Patient Info Box -->
+      <div class="bg-slate-50 p-3 rounded-xl border grid grid-cols-3 gap-2 text-slate-700">
+        <div><span class="font-bold">Téléphone :</span> <span x-text="selectedPatient.phone || '-'"></span></div>
+        <div><span class="font-bold">Âge :</span> <span x-text="selectedPatient.age ? selectedPatient.age + ' ans' : '-'"></span></div>
+        <div class="col-span-3"><span class="font-bold">Diagnostic / Notes :</span> <span x-text="selectedPatient.diagnosis || 'Aucune note'"></span></div>
+      </div>
+
+      <!-- Appointments History -->
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-800 text-sm">📅 Rendez-vous (Agenda)</h4>
+        <div class="border rounded-xl overflow-hidden">
+          <table class="w-full text-left">
+            <thead class="bg-slate-100 text-slate-500 font-bold border-b">
+              <tr><th class="p-2.5">Date & Heure</th><th class="p-2.5">Soin / Traitement</th><th class="p-2.5" x-show="userRole === 'doctor'">Coût</th></tr>
+            </thead>
+            <tbody class="divide-y">
+              <template x-for="app in patientAppointments" :key="app.id">
+                <tr>
+                  <td class="p-2.5 font-mono text-indigo-600 font-bold" x-text="app.date + ' à ' + app.time"></td>
+                  <td class="p-2.5" x-text="app.treatment"></td>
+                  <td class="p-2.5 font-black" x-show="userRole === 'doctor'" x-text="formatMoney(app.cost) + ' DZD'"></td>
+                </tr>
+              </template>
+              <template x-if="patientAppointments.length === 0">
+                <tr><td colspan="3" class="p-3 text-center text-slate-400">Aucun rendez-vous trouvé pour ce patient.</td></tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Payments History (Doctor Only) -->
+      <div class="space-y-2" x-show="userRole === 'doctor'">
+        <h4 class="font-bold text-slate-800 text-sm">💰 Versements & Paiements</h4>
+        <div class="border rounded-xl overflow-hidden">
+          <table class="w-full text-left">
+            <thead class="bg-slate-100 text-slate-500 font-bold border-b">
+              <tr><th class="p-2.5">Date & Heure exacte</th><th class="p-2.5">Montant Versé</th><th class="p-2.5">Notes</th></tr>
+            </thead>
+            <tbody class="divide-y">
+              <template x-for="pay in patientPayments" :key="pay.id">
+                <tr>
+                  <td class="p-2.5 font-mono" x-text="pay.dateTime"></td>
+                  <td class="p-2.5 font-black text-emerald-600" x-text="formatMoney(pay.amount) + ' DZD'"></td>
+                  <td class="p-2.5 text-slate-500" x-text="pay.note"></td>
+                </tr>
+              </template>
+              <template x-if="patientPayments.length === 0">
+                <tr><td colspan="3" class="p-3 text-center text-slate-400">Aucun versement enregistré pour ce patient.</td></tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button type="button" @click="showHistoryModal = false" class="px-5 py-2 bg-slate-200 text-slate-700 rounded-xl font-bold">Fermer</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODALS -->
-  <!-- MODAL: PATIENT -->
   <div x-show="showPatientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 space-y-3 text-xs">
       <h3 class="font-bold text-sm text-slate-800" x-text="editingPatientId ? 'Modifier le Patient' : 'Nouveau Patient'"></h3>
@@ -254,18 +329,12 @@
     </div>
   </div>
 
-  <!-- MODAL: APPOINTMENT (AGENDA) - MODIFIED PATIENT FIELD TO TEXT INPUT WITH AUTOCOMPLETE -->
   <div x-show="showAppointmentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 space-y-3 text-xs">
       <h3 class="font-bold text-sm text-slate-800" x-text="editingAppointmentId ? 'Modifier le RDV' : 'Nouveau RDV'"></h3>
       <div>
         <label class="block font-bold text-slate-700 mb-1">Nom du Patient</label>
-        <input type="text" x-model="appointmentForm.patientName" list="patientListOptions" placeholder="Écrivez ou choisissez le nom..." required class="w-full p-2 bg-slate-50 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-        <datalist id="patientListOptions">
-          <template x-for="p in patients" :key="p.id">
-            <option :value="p.name"></option>
-          </template>
-        </datalist>
+        <input type="text" x-model="appointmentForm.patientName" placeholder="Écrivez le nom du patient ici..." required class="w-full p-2.5 bg-slate-50 border rounded-lg focus:ring-2 focus:ring-indigo-500">
       </div>
       <div>
         <label class="block font-bold text-slate-700 mb-1">Téléphone du Patient</label>
@@ -296,16 +365,12 @@
     </div>
   </div>
 
-  <!-- MODAL: PAYMENT -->
   <div x-show="showPaymentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-5 space-y-3 text-xs">
       <h3 class="font-bold text-sm text-slate-800">Enregistrer un Versement</h3>
       <div>
         <label class="block font-bold text-slate-700 mb-1">Nom du Patient</label>
-        <input type="text" x-model="paymentForm.patientName" list="patientListOptionsPayment" placeholder="Écrivez le nom..." required class="w-full p-2 bg-slate-50 border rounded-lg">
-        <datalist id="patientListOptionsPayment">
-          <template x-for="p in patients" :key="p.id"><option :value="p.name"></option></template>
-        </datalist>
+        <input type="text" x-model="paymentForm.patientName" placeholder="Écrivez le nom du patient ici..." required class="w-full p-2.5 bg-slate-50 border rounded-lg">
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
@@ -369,9 +434,11 @@
         showPatientModal: false,
         showAppointmentModal: false,
         showPaymentModal: false,
+        showHistoryModal: false,
 
         editingPatientId: null,
         editingAppointmentId: null,
+        selectedPatient: {},
 
         patientForm: { name: '', phone: '', age: '', diagnosis: '' },
         appointmentForm: { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 2000 },
@@ -436,6 +503,21 @@
         get todayRevenue() { const t = new Date().toISOString().split('T')[0]; return this.payments.filter(p => p.date === t).reduce((s,p) => s + (Number(p.amount)||0), 0); },
         get totalPayments() { return this.payments.reduce((s,p) => s + (Number(p.amount)||0), 0); },
 
+        get patientAppointments() {
+          if (!this.selectedPatient.name) return [];
+          return this.appointments.filter(a => a.patientName.trim().toLowerCase() === this.selectedPatient.name.trim().toLowerCase());
+        },
+
+        get patientPayments() {
+          if (!this.selectedPatient.name) return [];
+          return this.payments.filter(p => p.patientName.trim().toLowerCase() === this.selectedPatient.name.trim().toLowerCase());
+        },
+
+        openPatientHistory(p) {
+          this.selectedPatient = p;
+          this.showHistoryModal = true;
+        },
+
         getWhatsAppLink(app) {
           let phoneClean = (app.phone || '').replace(/[^0-9]/g, '');
           if (phoneClean.startsWith('0')) phoneClean = '+213' + phoneClean.substring(1);
@@ -489,7 +571,7 @@
         },
 
         openPaymentModal() {
-          this.paymentForm = { patientName: '', amount: 0, date: new Date().toISOString().split('T')[0], note: '' },
+          this.paymentForm = { patientName: '', amount: 0, date: new Date().toISOString().split('T')[0], note: '' };
           this.showPaymentModal = true;
         },
         async savePayment() {
