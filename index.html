@@ -31,7 +31,7 @@
           <label class="block font-bold text-slate-300 mb-1.5">Adresse Email</label>
           <div class="relative">
             <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-500"></i>
-            <input type="email" x-model="loginEmail" placeholder="medecin@clinic.com" required 
+            <input type="email" x-model="loginEmail" placeholder="medecin3@clinic.com" required 
               class="w-full pl-10 pr-3 py-3 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500 transition">
           </div>
         </div>
@@ -242,7 +242,7 @@
         </div>
       </div>
 
-      <!-- 3. FINANCES & MADA3IL -->
+      <!-- 3. FINANCES & MDA3IL -->
       <div x-show="activeTab === 'finances' && userRole === 'doctor'" x-cloak class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- MDA3IL AL YAWM -->
@@ -644,14 +644,14 @@
         getAppointmentsForDate(d) { return this.appointments.filter(a => a.date === d); },
         get selectedDateAppointments() { return this.appointments.filter(a => a.date === this.selectedDate); },
 
-        // TRANSFERT D'UN RDV EN DOSSIER PATIENT
+        // TRANSFERT D'UN RDV EN DOSSIER PATIENT (زر نقل المريض)
         async convertToPatientDossier(app) {
           const { db, collection, addDoc } = window.firebaseService;
           await addDoc(collection(db, "cabinet_patients"), {
             name: app.patientName,
             phone: app.phone || '',
             totalAmount: app.cost || 0,
-            diagnosis: `Venuz pour: ${app.treatment} le ${app.date} à ${app.time}`
+            diagnosis: `Venu pour: ${app.treatment} le ${app.date} à ${app.time}`
           });
           alert(`Le RDV de ${app.patientName} a été transféré vers la liste des dossiers patients avec succès !`);
         },
