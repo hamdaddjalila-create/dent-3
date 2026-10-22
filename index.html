@@ -1,168 +1,188 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>عيادة جراحة وطب الأسنان - نظام الإدارة</title>
+  <title>Gestion Cabinet Dentaire Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap');
-    body { font-family: 'Cairo', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
     [x-cloak] { display: none !important; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 antialiased min-h-screen flex flex-col" x-data="dentalApp()" x-init="initApp()" :dir="lang === 'ar' ? 'rtl' : 'ltr'">
+<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col" x-data="dentalApp()" x-init="initApp()">
 
-  <!-- شاشة تسجيل الدخول -->
-  <div x-show="!isAuthenticated" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-xl p-4">
-    <div class="bg-slate-900/90 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 space-y-6 relative overflow-hidden">
-      
-      <!-- زر تغيير اللغة -->
-      <div class="flex justify-end">
-        <button @click="toggleLang()" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 text-teal-400 px-3 py-1.5 rounded-xl transition border border-slate-700/50 flex items-center gap-2">
-          <i class="fa-solid fa-globe"></i>
-          <span x-text="lang === 'ar' ? 'Français' : 'العربية'"></span>
-        </button>
-      </div>
-
+  <!-- ÉCRAN DE CONNEXION -->
+  <div x-show="!isAuthenticated" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-2xl p-4">
+    <div class="bg-slate-900/90 border border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-md p-8 space-y-6 relative overflow-hidden">
       <div class="text-center space-y-2">
-        <div class="inline-flex bg-gradient-to-tr from-teal-500 to-emerald-400 text-slate-950 p-4 rounded-2xl shadow-lg shadow-teal-500/20 mb-2">
+        <div class="inline-flex bg-gradient-to-tr from-teal-500 to-emerald-400 text-slate-950 p-4 rounded-2xl shadow-xl shadow-teal-500/20 mb-2">
           <i class="fa-solid fa-tooth text-3xl"></i>
         </div>
-        <h2 class="text-2xl font-black text-slate-100" x-text="t('appTitle')"></h2>
-        <p class="text-xs text-slate-400 font-semibold" x-text="t('loginSubtitle')"></p>
+        <h2 class="text-2xl font-black tracking-tight text-white">Cabinet Dentaire</h2>
+        <p class="text-xs text-slate-400 font-medium">Connectez-vous à votre espace de gestion</p>
       </div>
 
       <form @submit.prevent="login()" class="space-y-4 text-xs">
         <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('emailLabel')"></label>
+          <label class="block font-bold text-slate-300 mb-1.5">Adresse Email</label>
           <div class="relative">
-            <i class="fa-solid fa-envelope absolute top-3.5 text-slate-500" :class="lang === 'ar' ? 'right-3' : 'left-3'"></i>
+            <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-500"></i>
             <input type="email" x-model="loginEmail" placeholder="medecin@clinic.com" required 
-              :class="lang === 'ar' ? 'pr-9 pl-3' : 'pl-9 pr-3'"
-              class="w-full py-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition">
+              class="w-full pl-10 pr-3 py-3 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500 transition">
           </div>
         </div>
 
         <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('passwordLabel')"></label>
+          <label class="block font-bold text-slate-300 mb-1.5">Mot de passe</label>
           <div class="relative">
-            <i class="fa-solid fa-lock absolute top-3.5 text-slate-500" :class="lang === 'ar' ? 'right-3' : 'left-3'"></i>
+            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500"></i>
             <input type="password" x-model="loginPassword" placeholder="••••••••" required 
-              :class="lang === 'ar' ? 'pr-9 pl-3' : 'pl-9 pr-3'"
-              class="w-full py-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition">
+              class="w-full pl-10 pr-3 py-3 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500 transition">
           </div>
         </div>
 
         <div x-show="authError" class="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl text-center font-bold text-xs" x-text="authError"></div>
 
-        <button type="submit" :disabled="isLoading" class="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 py-3 rounded-xl font-bold text-xs transition shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2">
-          <span x-show="!isLoading"><i class="fa-solid fa-right-to-bracket"></i> <span x-text="t('loginBtn')"></span></span>
+        <button type="submit" :disabled="isLoading" class="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 py-3.5 rounded-xl font-bold text-xs transition shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2">
+          <span x-show="!isLoading" class="flex items-center gap-2"><i class="fa-solid fa-right-to-bracket"></i> Se Connecter</span>
           <span x-show="isLoading" class="animate-spin"><i class="fa-solid fa-circle-notch"></i></span>
         </button>
       </form>
     </div>
   </div>
 
-  <!-- الشاشة الرئيسية -->
+  <!-- APPLICATION PRINCIPALE -->
   <div x-show="isAuthenticated" x-cloak class="flex-1 flex flex-col">
-    <!-- الشريط العلوي -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30">
+    <!-- EN-TÊTE -->
+    <header class="bg-slate-900/80 border-b border-slate-800/80 sticky top-0 z-30 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="bg-gradient-to-tr from-teal-500 to-emerald-400 text-slate-950 p-2 rounded-xl shadow-md shadow-teal-500/10 font-black text-xl">
+          <div class="bg-gradient-to-tr from-teal-500 to-emerald-400 text-slate-950 p-2.5 rounded-xl shadow-lg shadow-teal-500/10 font-black text-xl">
             <i class="fa-solid fa-tooth"></i>
           </div>
           <div>
-            <h1 class="font-black text-sm sm:text-base leading-none text-slate-100" x-text="t('appTitle')"></h1>
-            <p class="text-xs text-teal-400 font-semibold mt-1" x-text="userRole === 'doctor' ? t('roleDoctor') : t('roleAssistant')"></p>
+            <h1 class="font-black text-base text-slate-100 leading-none">Cabinet Dentaire Pro</h1>
+            <p class="text-[11px] text-teal-400 font-semibold mt-1" x-text="userRole === 'doctor' ? 'Compte Médecin (Accès Total)' : 'Compte Assistant (Accès Limité)'"></p>
           </div>
         </div>
 
-        <div class="flex items-center gap-3">
-          <button @click="toggleLang()" class="text-xs font-bold bg-slate-800 hover:bg-slate-700 text-teal-400 px-3 py-1.5 rounded-xl transition border border-slate-700/50 flex items-center gap-1.5">
-            <i class="fa-solid fa-globe"></i>
-            <span x-text="lang === 'ar' ? 'Fr' : 'عربي'"></span>
-          </button>
-          
-          <button @click="logout()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-            <i class="fa-solid fa-power-off"></i>
-            <span x-text="t('logout')"></span>
-          </button>
-        </div>
+        <button @click="logout()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
+          <i class="fa-solid fa-power-off"></i> Déconnexion
+        </button>
       </div>
     </header>
 
-    <!-- القائمة الرئيسية -->
-    <nav class="bg-slate-900/50 border-b border-slate-800/80 backdrop-blur-md sticky top-16 z-20">
+    <!-- NAVIGATION -->
+    <nav class="bg-slate-900/40 border-b border-slate-800/60 sticky top-16 z-20 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto text-xs font-bold py-2.5">
-        <button @click="activeTab = 'agenda'" :class="activeTab === 'agenda' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition whitespace-nowrap flex items-center gap-2">
-          <i class="fa-solid fa-calendar-days"></i> <span x-text="t('tabAgenda')"></span>
+        <button @click="activeTab = 'agenda'" :class="activeTab === 'agenda' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-calendar-days"></i> Agenda Mensuel & RDV
         </button>
-        <button @click="activeTab = 'patients'" :class="activeTab === 'patients' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition whitespace-nowrap flex items-center gap-2">
-          <i class="fa-solid fa-users"></i> <span x-text="t('tabPatients')"></span>
+        <button @click="activeTab = 'patients'" :class="activeTab === 'patients' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-users"></i> Dossiers Patients & Tranches
         </button>
-        
         <template x-if="userRole === 'doctor'">
-          <button @click="activeTab = 'finances'" :class="activeTab === 'finances' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition whitespace-nowrap flex items-center gap-2">
-            <i class="fa-solid fa-wallet"></i> <span x-text="t('tabFinances')"></span>
+          <button @click="activeTab = 'finances'" :class="activeTab === 'finances' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-wallet"></i> Finances & Mda3il
           </button>
         </template>
-
-        <button @click="activeTab = 'chat'" :class="activeTab === 'chat' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition whitespace-nowrap flex items-center gap-2">
-          <i class="fa-solid fa-comments"></i> <span x-text="t('tabChat')"></span>
+        <button @click="activeTab = 'chat'" :class="activeTab === 'chat' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap relative">
+          <i class="fa-solid fa-comments"></i> Messagerie Interne
         </button>
       </div>
     </nav>
 
-    <!-- المحتوى الرئيسي -->
+    <!-- CONTENU PRINCIPAL -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
-      <!-- 1. المواعيد -->
-      <div x-show="activeTab === 'agenda'" class="space-y-4">
-        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
-          <h2 class="font-black text-slate-200 text-sm md:text-base flex items-center gap-2">
-            <i class="fa-solid fa-calendar-check text-teal-400"></i> <span x-text="t('agendaTitle')"></span>
-          </h2>
-          <button @click="openAppointmentModal()" class="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-teal-500/10">
-            <i class="fa-solid fa-calendar-plus"></i> <span x-text="t('newAppointment')"></span>
-          </button>
+      <!-- 1. AGENDA MENSUEL & RDV -->
+      <div x-show="activeTab === 'agenda'" class="space-y-6">
+        <!-- RENDER AGENDA MENSUEL -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-bold text-slate-200 text-base flex items-center gap-2">
+              <i class="fa-solid fa-calendar-alt text-teal-400"></i>
+              <span x-text="currentMonthName + ' ' + currentYear"></span>
+            </h2>
+            <div class="flex items-center gap-2">
+              <button @click="prevMonth()" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 transition"><i class="fa-solid fa-chevron-left"></i></button>
+              <button @click="nextMonth()" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 transition"><i class="fa-solid fa-chevron-right"></i></button>
+              <button @click="openAppointmentModal()" class="ml-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md shadow-teal-500/10">
+                <i class="fa-solid fa-calendar-plus"></i> Nouveau RDV
+              </button>
+            </div>
+          </div>
+
+          <!-- GRILLE DU CALENDRIER -->
+          <div class="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs">
+            <template x-for="day in ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']">
+              <div class="py-2 font-bold text-slate-500 uppercase tracking-wider" x-text="day"></div>
+            </template>
+            <template x-for="blank in calendarBlanks">
+              <div class="h-20 bg-slate-950/20 rounded-2xl border border-slate-900/50"></div>
+            </template>
+            <template x-for="dateObj in calendarDays" :key="dateObj.dateStr">
+              <div @click="selectCalendarDate(dateObj.dateStr)" 
+                :class="selectedDate === dateObj.dateStr ? 'border-teal-500 bg-teal-500/10' : 'border-slate-800/80 bg-slate-950/40 hover:border-slate-700'"
+                class="h-20 p-2 rounded-2xl border transition cursor-pointer flex flex-col justify-between text-left relative overflow-hidden">
+                <span class="font-bold text-xs" :class="dateObj.isToday ? 'bg-teal-500 text-slate-950 px-2 py-0.5 rounded-lg' : 'text-slate-400'" x-text="dateObj.dayNum"></span>
+                <div class="space-y-1 overflow-y-auto max-h-12">
+                  <template x-for="app in getAppointmentsForDate(dateObj.dateStr)" :key="app.id">
+                    <div class="bg-teal-500/20 text-teal-300 text-[10px] p-1 rounded-md truncate font-medium border border-teal-500/30">
+                      <span class="font-mono font-bold" x-text="app.time"></span> - <span x-text="app.patientName"></span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
         </div>
 
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+        <!-- LISTE DES RDV DU JOUR SELECTIONNE -->
+        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl space-y-3 p-5">
+          <h3 class="font-bold text-sm text-slate-300 flex items-center justify-between">
+            <span>Rendez-vous du : <span class="text-teal-400 font-mono" x-text="selectedDate"></span></span>
+            <span class="text-xs bg-slate-800 px-3 py-1 rounded-xl text-slate-400" x-text="selectedDateAppointments.length + ' RDV'"></span>
+          </h3>
+
           <div class="overflow-x-auto">
-            <table class="w-full text-right text-xs">
-              <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-800/60 text-slate-400 font-bold border-b border-slate-800">
                 <tr>
-                  <th class="p-3.5" x-text="t('patientName')"></th>
-                  <th class="p-3.5" x-text="t('phone')"></th>
-                  <th class="p-3.5" x-text="t('dateTime')"></th>
-                  <th class="p-3.5" x-text="t('treatment')"></th>
-                  <th class="p-3.5" x-show="userRole === 'doctor'" x-text="t('cost')"></th>
-                  <th class="p-3.5 text-center" x-text="t('actions')"></th>
+                  <th class="p-3">Heure & Date</th>
+                  <th class="p-3">Patient</th>
+                  <th class="p-3">Téléphone</th>
+                  <th class="p-3">Acte / Soin</th>
+                  <th class="p-3" x-show="userRole === 'doctor'">Prix (DZD)</th>
+                  <th class="p-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-800/60">
-                <template x-for="app in appointments" :key="app.id">
+                <template x-for="app in selectedDateAppointments" :key="app.id">
                   <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3.5 font-bold text-slate-200" x-text="app.patientName"></td>
-                    <td class="p-3.5 font-mono text-slate-400" x-text="app.phone || '-'"></td>
-                    <td class="p-3.5 font-mono text-teal-400 font-bold" x-text="app.date + ' ' + app.time"></td>
-                    <td class="p-3.5 text-slate-300" x-text="app.treatment"></td>
-                    <td class="p-3.5 font-black text-emerald-400" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
-                    <td class="p-3.5 text-center space-x-2 space-x-reverse">
-                      <a :href="getWhatsAppLink(app)" target="_blank" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition">
-                        <i class="fa-brands fa-whatsapp"></i> <span x-text="t('whatsappReminder')"></span>
+                    <td class="p-3 font-mono font-bold text-teal-400" x-text="app.date + ' à ' + app.time"></td>
+                    <td class="p-3 font-bold text-slate-200" x-text="app.patientName"></td>
+                    <td class="p-3 font-mono text-slate-400" x-text="app.phone || '-'"></td>
+                    <td class="p-3 text-slate-300" x-text="app.treatment"></td>
+                    <td class="p-3 font-bold text-emerald-400 font-mono" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
+                    <td class="p-3 text-center space-x-1.5 whitespace-nowrap">
+                      <!-- ZER NAQL PATIENT ILA DOSSIER -->
+                      <button @click="convertToPatientDossier(app)" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                        <i class="fa-solid fa-user-check"></i> Convertir en dossier
+                      </button>
+                      <a :href="getWhatsAppLink(app)" target="_blank" class="bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 px-2 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                        <i class="fa-brands fa-whatsapp"></i> Rappel
                       </a>
-                      <button @click="editAppointment(app)" class="text-sky-400 hover:text-sky-300 p-1 font-bold"><i class="fa-solid fa-pen"></i></button>
-                      <button @click="deleteRecord('cabinet_appointments', app.id)" class="text-rose-400 hover:text-rose-300 p-1 font-bold"><i class="fa-solid fa-trash"></i></button>
+                      <button @click="deleteRecord('cabinet_appointments', app.id)" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                   </tr>
                 </template>
-                <template x-if="appointments.length === 0">
-                  <tr><td colspan="6" class="p-8 text-center text-slate-500 font-bold" x-text="t('noData')"></td></tr>
+                <template x-if="selectedDateAppointments.length === 0">
+                  <tr><td colspan="6" class="p-6 text-center text-slate-500 font-medium">Aucun rendez-vous pour cette date.</td></tr>
                 </template>
               </tbody>
             </table>
@@ -170,51 +190,51 @@
         </div>
       </div>
 
-      <!-- 2. المرضى -->
+      <!-- 2. DOSSIERS PATIENTS & TRANCHES DE PAIEMENT -->
       <div x-show="activeTab === 'patients'" x-cloak class="space-y-4">
-        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="bg-slate-900 p-4 rounded-3xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div class="relative w-full sm:w-80">
-            <i class="fa-solid fa-magnifying-glass absolute top-3 text-slate-500" :class="lang === 'ar' ? 'right-3' : 'left-3'"></i>
-            <input type="text" x-model="patientSearch" :placeholder="t('searchPatient')" 
-              :class="lang === 'ar' ? 'pr-9 pl-3' : 'pl-9 pr-3'"
-              class="w-full py-2 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-teal-500">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500"></i>
+            <input type="text" x-model="patientSearch" placeholder="Rechercher un patient..." 
+              class="w-full pl-10 pr-3 py-2 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-teal-500">
           </div>
-          <button @click="openPatientModal()" class="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-teal-500/10">
-            <i class="fa-solid fa-user-plus"></i> <span x-text="t('newPatient')"></span>
+          <button @click="openPatientModal()" class="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-teal-500/10">
+            <i class="fa-solid fa-user-plus"></i> Nouveau Patient
           </button>
         </div>
 
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
           <div class="overflow-x-auto">
-            <table class="w-full text-right text-xs">
+            <table class="w-full text-left text-xs">
               <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
                 <tr>
-                  <th class="p-3.5" x-text="t('patientName')"></th>
-                  <th class="p-3.5" x-text="t('phone')"></th>
-                  <th class="p-3.5" x-text="t('age')"></th>
-                  <th class="p-3.5" x-text="t('diagnosis')"></th>
-                  <th class="p-3.5 text-center" x-text="t('actions')"></th>
+                  <th class="p-3.5">Patient</th>
+                  <th class="p-3.5">Téléphone</th>
+                  <th class="p-3.5">Montant Total</th>
+                  <th class="p-3.5">Total Payé</th>
+                  <th class="p-3.5">Reste à Payer</th>
+                  <th class="p-3.5 text-center">Actions & Tranches</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-800/60">
                 <template x-for="p in filteredPatients" :key="p.id">
                   <tr class="hover:bg-slate-800/40 transition">
                     <td class="p-3.5 font-bold text-slate-200" x-text="p.name"></td>
-                    <td class="p-3.5 font-mono text-slate-400" x-text="p.phone"></td>
-                    <td class="p-3.5 text-slate-300" x-text="p.age ? p.age + ' ' + t('years') : '-'"></td>
-                    <td class="p-3.5 text-slate-400 max-w-xs truncate" x-text="p.diagnosis"></td>
-                    <td class="p-3.5 text-center space-x-2 space-x-reverse">
-                      <button @click="openPatientHistory(p)" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition">
-                        <i class="fa-solid fa-clock-rotate-left"></i> <span x-text="t('history')"></span>
+                    <td class="p-3.5 font-mono text-slate-400" x-text="p.phone || '-'"></td>
+                    <td class="p-3.5 font-bold text-slate-300 font-mono" x-text="(p.totalAmount || 0) + ' DZD'"></td>
+                    <td class="p-3.5 font-bold text-emerald-400 font-mono" x-text="getPatientTotalPaid(p.id) + ' DZD'"></td>
+                    <td class="p-3.5 font-bold font-mono" :class="(p.totalAmount - getPatientTotalPaid(p.id)) > 0 ? 'text-rose-400' : 'text-slate-500'" x-text="(p.totalAmount - getPatientTotalPaid(p.id)) + ' DZD'"></td>
+                    <td class="p-3.5 text-center space-x-1.5 whitespace-nowrap">
+                      <button @click="openTrancheModal(p)" class="bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/20 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                        <i class="fa-solid fa-money-bill-transfer"></i> Tranches de paiement
                       </button>
-                      <button @click="openAppointmentModalForPatient(p)" class="text-teal-400 hover:text-teal-300 font-bold px-1" x-text="t('addRdv')"></button>
                       <button @click="editPatient(p)" class="text-sky-400 hover:text-sky-300 p-1"><i class="fa-solid fa-pen"></i></button>
                       <button @click="deleteRecord('cabinet_patients', p.id)" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                   </tr>
                 </template>
                 <template x-if="filteredPatients.length === 0">
-                  <tr><td colspan="5" class="p-8 text-center text-slate-500 font-bold" x-text="t('noData')"></td></tr>
+                  <tr><td colspan="6" class="p-8 text-center text-slate-500 font-medium">Aucun patient enregistré.</td></tr>
                 </template>
               </tbody>
             </table>
@@ -222,56 +242,49 @@
         </div>
       </div>
 
-      <!-- 3. المالية -->
+      <!-- 3. FINANCES & MADA3IL -->
       <div x-show="activeTab === 'finances' && userRole === 'doctor'" x-cloak class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+          <!-- MDA3IL AL YAWM -->
+          <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-            <p class="text-xs text-slate-400 font-bold" x-text="t('todayRevenue')"></p>
-            <h3 class="text-2xl font-black text-emerald-400 mt-2 font-mono" x-text="todayRevenue + ' DZD'">0 DZD</h3>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Mda3il du Jour (Calcul Automatique)</p>
+            <h3 class="text-3xl font-black text-emerald-400 mt-2 font-mono" x-text="todayRevenue + ' DZD'">0 DZD</h3>
+            <p class="text-[11px] text-slate-500 mt-1">Calculé à partir des tranches payées aujourd'hui</p>
           </div>
-          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
+
+          <!-- TOTAL GENERAL DES MDA3IL -->
+          <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
-            <p class="text-xs text-slate-400 font-bold" x-text="t('totalRevenue')"></p>
-            <h3 class="text-2xl font-black text-teal-400 mt-2 font-mono" x-text="totalPayments + ' DZD'">0 DZD</h3>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Mda3il Global</p>
+            <h3 class="text-3xl font-black text-teal-400 mt-2 font-mono" x-text="totalPayments + ' DZD'">0 DZD</h3>
+            <p class="text-[11px] text-slate-500 mt-1">Total de toutes les tranches encaissées</p>
           </div>
         </div>
 
-        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
-          <h2 class="font-black text-slate-200 text-sm md:text-base flex items-center gap-2">
-            <i class="fa-solid fa-receipt text-teal-400"></i> <span x-text="t('paymentsList')"></span>
-          </h2>
-          <button @click="openPaymentModal()" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-emerald-500/10">
-            <i class="fa-solid fa-money-bill-wave"></i> <span x-text="t('newPayment')"></span>
-          </button>
-        </div>
-
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+        <!-- LISTE GLOBALE DES TRANCHES PAYEES -->
+        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl p-5 space-y-3">
+          <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-teal-400"></i> Historique Global des Tranches Encaissées
+          </h3>
           <div class="overflow-x-auto">
-            <table class="w-full text-right text-xs">
+            <table class="w-full text-left text-xs">
               <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
                 <tr>
-                  <th class="p-3.5" x-text="t('patientName')"></th>
-                  <th class="p-3.5" x-text="t('amount')"></th>
-                  <th class="p-3.5" x-text="t('dateTime')"></th>
-                  <th class="p-3.5" x-text="t('notes')"></th>
-                  <th class="p-3.5 text-center" x-text="t('actions')"></th>
+                  <th class="p-3">Patient</th>
+                  <th class="p-3">Montant Tranche</th>
+                  <th class="p-3">Date & Heure exacte</th>
+                  <th class="p-3">Note / Remarque</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-800/60">
-                <template x-for="pay in payments" :key="pay.id">
+                <template x-for="t in tranches" :key="t.id">
                   <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3.5 font-bold text-slate-200" x-text="pay.patientName"></td>
-                    <td class="p-3.5 font-black text-emerald-400 font-mono" x-text="pay.amount + ' DZD'"></td>
-                    <td class="p-3.5 font-mono text-slate-400" x-text="pay.dateTime"></td>
-                    <td class="p-3.5 text-slate-400" x-text="pay.note"></td>
-                    <td class="p-3.5 text-center">
-                      <button @click="deleteRecord('cabinet_payments', pay.id)" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
-                    </td>
+                    <td class="p-3 font-bold text-slate-200" x-text="t.patientName"></td>
+                    <td class="p-3 font-black text-emerald-400 font-mono" x-text="t.amount + ' DZD'"></td>
+                    <td class="p-3 font-mono text-slate-400" x-text="t.dateTime"></td>
+                    <td class="p-3 text-slate-400" x-text="t.note || '-'"></td>
                   </tr>
-                </template>
-                <template x-if="payments.length === 0">
-                  <tr><td colspan="5" class="p-8 text-center text-slate-500 font-bold" x-text="t('noData')"></td></tr>
                 </template>
               </tbody>
             </table>
@@ -279,29 +292,40 @@
         </div>
       </div>
 
-      <!-- 4. الدردشة الداخلية -->
+      <!-- 4. MESSAGERIE INTERNE (AVEC SON D'ALERTE, MODIFICATION ET SUPPRESSION) -->
       <div x-show="activeTab === 'chat'" x-cloak class="space-y-4">
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden flex flex-col h-[520px] shadow-2xl">
-          <div class="bg-slate-800/80 border-b border-slate-800 p-4 font-bold text-sm text-slate-200 flex items-center gap-2">
-            <i class="fa-solid fa-comments text-teal-400"></i> <span x-text="t('internalChat')"></span>
+        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden flex flex-col h-[560px] shadow-2xl">
+          <div class="bg-slate-800/80 border-b border-slate-800 p-4 font-bold text-sm text-slate-200 flex items-center justify-between">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-comments text-teal-400"></i> Messagerie Interne du Cabinet</span>
+            <span class="text-[11px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20"><i class="fa-solid fa-volume-high"></i> Alerte Sonore Activée</span>
           </div>
-          <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-950/40">
+
+          <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-950/40" id="chatContainer">
             <template x-for="msg in chatMessages" :key="msg.id">
-              <div :class="msg.senderEmail === userEmail ? 'flex justify-start' : 'flex justify-end'">
-                <div :class="msg.senderEmail === userEmail ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-slate-200 border border-slate-700/60'" class="max-w-md rounded-2xl p-3 text-xs space-y-1 shadow-md">
-                  <div class="flex justify-between gap-4 text-[10px] opacity-75 font-bold">
-                    <span x-text="msg.senderRole === 'doctor' ? t('roleDoctor') : t('roleAssistant')"></span>
+              <div :class="msg.senderEmail === userEmail ? 'flex justify-end' : 'flex justify-start'">
+                <div :class="msg.senderEmail === userEmail ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-slate-200 border border-slate-700/60'" class="max-w-md rounded-2xl p-3 text-xs space-y-1.5 shadow-md relative group">
+                  <div class="flex justify-between items-center gap-4 text-[10px] opacity-75 font-bold">
+                    <span x-text="msg.senderRole === 'doctor' ? 'Dr. Médecin' : 'Assistant(e)'"></span>
                     <span x-text="msg.time"></span>
                   </div>
-                  <p class="font-medium whitespace-pre-wrap" x-text="msg.text"></p>
+                  <p class="font-medium whitespace-pre-wrap text-xs" x-text="msg.text"></p>
+                  
+                  <!-- ACTIONS MODIFIER / SUPPRIMER (POUR L'EXPÉDITEUR) -->
+                  <template x-if="msg.senderEmail === userEmail">
+                    <div class="flex justify-end gap-2 text-[10px] pt-1 border-t border-slate-950/10">
+                      <button @click="editChatMessage(msg)" class="hover:underline opacity-80"><i class="fa-solid fa-pen"></i> Modifier</button>
+                      <button @click="deleteRecord('cabinet_chat', msg.id)" class="hover:underline opacity-80 text-rose-900"><i class="fa-solid fa-trash"></i> Supprimer</button>
+                    </div>
+                  </template>
                 </div>
               </div>
             </template>
           </div>
+
           <form @submit.prevent="sendChatMessage()" class="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
-            <input type="text" x-model="chatInput" :placeholder="t('typeMessage')" required class="flex-1 p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-teal-500">
-            <button type="submit" class="bg-teal-500 hover:bg-teal-400 text-slate-950 px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-md shadow-teal-500/10 flex items-center gap-1.5">
-              <i class="fa-solid fa-paper-plane"></i> <span x-text="t('send')"></span>
+            <input type="text" x-model="chatInput" placeholder="Écrivez votre message ici..." required class="flex-1 p-3 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-teal-500">
+            <button type="submit" class="bg-teal-500 hover:bg-teal-400 text-slate-950 px-5 py-3 rounded-xl font-bold text-xs transition shadow-md shadow-teal-500/10 flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> Envoyer
             </button>
           </form>
         </div>
@@ -310,174 +334,148 @@
     </main>
   </div>
 
-  <!-- النوافذ المنبثقة (Modals) -->
+  <!-- MODALS / FENÊTRES MODALES -->
 
-  <!-- نافذة تاريخ المريض -->
-  <div x-show="showHistoryModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-2xl p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-black text-base text-teal-400 flex items-center gap-2">
-          <i class="fa-solid fa-clock-rotate-left"></i> <span x-text="t('patientHistory')"></span>
-        </h3>
-        <button @click="showHistoryModal = false" class="text-slate-500 hover:text-slate-300 font-bold text-lg"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-800 grid grid-cols-2 gap-3 text-slate-300">
-        <div><span class="font-bold text-slate-400" x-text="t('patientName') + ': '"></span><span class="font-bold text-slate-100" x-text="selectedPatient.name"></span></div>
-        <div><span class="font-bold text-slate-400" x-text="t('phone') + ': '"></span><span x-text="selectedPatient.phone || '-'"></span></div>
-        <div class="col-span-2"><span class="font-bold text-slate-400" x-text="t('diagnosis') + ': '"></span><span x-text="selectedPatient.diagnosis || '-'"></span></div>
-      </div>
-
-      <!-- تاريخ المواعيد -->
-      <div class="space-y-2">
-        <h4 class="font-bold text-slate-200 text-xs flex items-center gap-1.5"><i class="fa-solid fa-calendar-days text-teal-400"></i> <span x-text="t('tabAgenda')"></span></h4>
-        <div class="border border-slate-800 rounded-xl overflow-hidden">
-          <table class="w-full text-right">
-            <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
-              <tr><th class="p-2.5" x-text="t('dateTime')"></th><th class="p-2.5" x-text="t('treatment')"></th><th class="p-2.5" x-show="userRole === 'doctor'" x-text="t('cost')"></th></tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60">
-              <template x-for="app in patientAppointments" :key="app.id">
-                <tr>
-                  <td class="p-2.5 font-mono text-teal-400 font-bold" x-text="app.date + ' ' + app.time"></td>
-                  <td class="p-2.5 text-slate-300" x-text="app.treatment"></td>
-                  <td class="p-2.5 font-black text-emerald-400" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
-                </tr>
-              </template>
-              <template x-if="patientAppointments.length === 0">
-                <tr><td colspan="3" class="p-3 text-center text-slate-500" x-text="t('noData')"></td></tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- تاريخ الدفعات (للطبيب فقط) -->
-      <div class="space-y-2" x-show="userRole === 'doctor'">
-        <h4 class="font-bold text-slate-200 text-xs flex items-center gap-1.5"><i class="fa-solid fa-wallet text-emerald-400"></i> <span x-text="t('tabFinances')"></span></h4>
-        <div class="border border-slate-800 rounded-xl overflow-hidden">
-          <table class="w-full text-right">
-            <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
-              <tr><th class="p-2.5" x-text="t('dateTime')"></th><th class="p-2.5" x-text="t('amount')"></th><th class="p-2.5" x-text="t('notes')"></th></tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60">
-              <template x-for="pay in patientPayments" :key="pay.id">
-                <tr>
-                  <td class="p-2.5 font-mono text-slate-400" x-text="pay.dateTime"></td>
-                  <td class="p-2.5 font-black text-emerald-400 font-mono" x-text="pay.amount + ' DZD'"></td>
-                  <td class="p-2.5 text-slate-400" x-text="pay.note"></td>
-                </tr>
-              </template>
-              <template x-if="patientPayments.length === 0">
-                <tr><td colspan="3" class="p-3 text-center text-slate-500" x-text="t('noData')"></td></tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="flex justify-end pt-2">
-        <button type="button" @click="showHistoryModal = false" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold transition" x-text="t('cancel')"></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة إضافة / تعديل مريض -->
-  <div x-show="showPatientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
-      <h3 class="font-black text-sm text-slate-100" x-text="editingPatientId ? t('editPatient') : t('newPatient')"></h3>
-      <div>
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('patientName')"></label>
-        <input type="text" x-model="patientForm.name" placeholder="محمد بوعلي" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('phone')"></label>
-          <input type="text" x-model="patientForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('age')"></label>
-          <input type="number" x-model="patientForm.age" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
-        </div>
-      </div>
-      <div>
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('diagnosis')"></label>
-        <textarea x-model="patientForm.diagnosis" rows="2" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500"></textarea>
-      </div>
-      <div class="flex justify-end gap-2 pt-2">
-        <button type="button" @click="showPatientModal = false" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold" x-text="t('cancel')"></button>
-        <button type="button" @click="savePatient()" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold transition" x-text="t('save')"></button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة إضافة / تعديل موعد -->
+  <!-- MODAL RDV -->
   <div x-show="showAppointmentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
-      <h3 class="font-black text-sm text-slate-100" x-text="editingAppointmentId ? t('editAppointment') : t('newAppointment')"></h3>
+      <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-plus text-teal-400"></i> Prise de Rendez-vous
+      </h3>
       <div>
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('patientName')"></label>
-        <input type="text" x-model="appointmentForm.patientName" placeholder="اسم المريض..." required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-300 mb-1">Nom du Patient</label>
+        <input type="text" x-model="appointmentForm.patientName" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('phone')"></label>
+        <label class="block font-bold text-slate-300 mb-1">Numéro Téléphone</label>
         <input type="text" x-model="appointmentForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('date')"></label>
+          <label class="block font-bold text-slate-300 mb-1">Date exacte</label>
           <input type="date" x-model="appointmentForm.date" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
         </div>
         <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('time')"></label>
+          <label class="block font-bold text-slate-300 mb-1">Heure exacte</label>
           <input type="time" x-model="appointmentForm.time" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
         </div>
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('treatment')"></label>
-        <input type="text" x-model="appointmentForm.treatment" placeholder="قلع، تنظيف، حشو..." required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-300 mb-1">Soin / Traitement</label>
+        <input type="text" x-model="appointmentForm.treatment" placeholder="Extraction, Détartrage..." required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
       </div>
       <div x-show="userRole === 'doctor'">
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('cost')"></label>
+        <label class="block font-bold text-slate-300 mb-1">Prix Estimé (DZD)</label>
         <input type="number" x-model.number="appointmentForm.cost" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button type="button" @click="showAppointmentModal = false" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold" x-text="t('cancel')"></button>
-        <button type="button" @click="saveAppointment()" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold transition" x-text="t('save')"></button>
+        <button type="button" @click="showAppointmentModal = false" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold">Annuler</button>
+        <button type="button" @click="saveAppointment()" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold transition">Enregistrer RDV</button>
       </div>
     </div>
   </div>
 
-  <!-- نافذة إضافة دفعة مالية -->
-  <div x-show="showPaymentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
+  <!-- MODAL TRANCHES DE PAIEMENT POUR UN PATIENT -->
+  <div x-show="showTrancheModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-lg p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-teal-400 flex items-center gap-2">
+          <i class="fa-solid fa-money-bill-wave"></i> Suivi des Tranches de Paiement
+        </h3>
+        <button @click="showTrancheModal = false" class="text-slate-500 hover:text-slate-300 font-bold"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- INFOS PATIENT & RESUME -->
+      <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-800 space-y-2">
+        <p class="font-bold text-slate-200">Patient: <span class="text-teal-400" x-text="selectedPatient.name"></span></p>
+        <div class="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1 border-t border-slate-800">
+          <div>Total: <span class="font-bold text-slate-300" x-text="(selectedPatient.totalAmount || 0) + ' DZD'"></span></div>
+          <div>Payé: <span class="font-bold text-emerald-400" x-text="getPatientTotalPaid(selectedPatient.id) + ' DZD'"></span></div>
+          <div>Reste: <span class="font-bold text-rose-400" x-text="((selectedPatient.totalAmount || 0) - getPatientTotalPaid(selectedPatient.id)) + ' DZD'"></span></div>
+        </div>
+      </div>
+
+      <!-- FORMULAIRE AJOUTER UNE TRANCHE -->
+      <form @submit.prevent="addTrancheForPatient()" class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800/80 space-y-3">
+        <h4 class="font-bold text-slate-300">Ajouter une nouvelle tranche payée</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-400 mb-1">Montant Tranche (DZD)</label>
+            <input type="number" x-model.number="trancheForm.amount" required class="w-full p-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-100">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-400 mb-1">Note / Remarque</label>
+            <input type="text" x-model="trancheForm.note" placeholder="Versement 1..." class="w-full p-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-100">
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-2 rounded-xl font-bold transition flex items-center justify-center gap-1">
+          <i class="fa-solid fa-plus"></i> Enregistrer la tranche (Date & Heure auto)
+        </button>
+      </form>
+
+      <!-- HISTORIQUE DES TRANCHES DU PATIENT -->
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-400">Historique des tranches versées</h4>
+        <div class="border border-slate-800 rounded-xl overflow-hidden">
+          <table class="w-full text-left">
+            <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
+              <tr>
+                <th class="p-2.5">Date & Heure</th>
+                <th class="p-2.5">Montant Versé</th>
+                <th class="p-2.5">Note</th>
+                <th class="p-2.5 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <template x-for="tr in currentPatientTranches" :key="tr.id">
+                <tr>
+                  <td class="p-2.5 font-mono text-slate-400" x-text="tr.dateTime"></td>
+                  <td class="p-2.5 font-black text-emerald-400 font-mono" x-text="tr.amount + ' DZD'"></td>
+                  <td class="p-2.5 text-slate-400" x-text="tr.note || '-'"></td>
+                  <td class="p-2.5 text-center">
+                    <button @click="deleteRecord('cabinet_tranches', tr.id)" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="currentPatientTranches.length === 0">
+                <tr><td colspan="4" class="p-4 text-center text-slate-500">Aucune tranche versée pour l'instant.</td></tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL AJOUT / EDIT PATIENT -->
+  <div x-show="showPatientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
-      <h3 class="font-black text-sm text-slate-100" x-text="t('newPayment')"></h3>
+      <h3 class="font-bold text-sm text-slate-100" x-text="editingPatientId ? 'Modifier Dossier Patient' : 'Nouveau Dossier Patient'"></h3>
       <div>
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('patientName')"></label>
-        <input type="text" x-model="paymentForm.patientName" placeholder="اسم المريض..." required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('amount')"></label>
-          <input type="number" x-model.number="paymentForm.amount" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-300 mb-1" x-text="t('date')"></label>
-          <input type="date" x-model="paymentForm.date" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
-        </div>
+        <label class="block font-bold text-slate-300 mb-1">Nom Complet du Patient</label>
+        <input type="text" x-model="patientForm.name" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1" x-text="t('notes')"></label>
-        <input type="text" x-model="paymentForm.note" placeholder="الشطر الأول..." class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-300 mb-1">Téléphone</label>
+        <input type="text" x-model="patientForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+      </div>
+      <div>
+        <label class="block font-bold text-slate-300 mb-1">Montant Total des Soins (DZD)</label>
+        <input type="number" x-model.number="patientForm.totalAmount" placeholder="Ex: 50000" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+      </div>
+      <div>
+        <label class="block font-bold text-slate-300 mb-1">Diagnostic / Notes Médicales</label>
+        <textarea x-model="patientForm.diagnosis" rows="3" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500"></textarea>
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button type="button" @click="showPaymentModal = false" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold" x-text="t('cancel')"></button>
-        <button type="button" @click="savePayment()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl font-bold transition" x-text="t('save')"></button>
+        <button type="button" @click="showPatientModal = false" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold">Annuler</button>
+        <button type="button" @click="savePatient()" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold transition">Enregistrer</button>
       </div>
     </div>
   </div>
 
-  <!-- سكربت الربط مع الـ FIREBASE -->
+  <!-- SCRIPT FIREBASE MODULE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -502,11 +500,10 @@
     window.firebaseService = { auth, db, signInWithEmailAndPassword, signOut, onAuthStateChanged, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot };
   </script>
 
-  <!-- منطق التطبيق والترجمة (ALPINE LOGIC) -->
+  <!-- LOGIQUE APPLICATIVE ALPINEJS -->
   <script>
     function dentalApp() {
       return {
-        lang: 'ar',
         isAuthenticated: false,
         isLoading: false,
         authError: '',
@@ -519,129 +516,28 @@
         activeTab: 'agenda',
         patientSearch: '',
 
+        currentMonth: new Date().getMonth(),
+        currentYear: new Date().getFullYear(),
+        selectedDate: new Date().toISOString().split('T')[0],
+
         showPatientModal: false,
         showAppointmentModal: false,
-        showPaymentModal: false,
-        showHistoryModal: false,
+        showTrancheModal: false,
 
         editingPatientId: null,
         editingAppointmentId: null,
+        editingChatMsgId: null,
         selectedPatient: {},
 
-        patientForm: { name: '', phone: '', age: '', diagnosis: '' },
+        patientForm: { name: '', phone: '', totalAmount: 0, diagnosis: '' },
         appointmentForm: { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 2000 },
-        paymentForm: { patientName: '', amount: 0, date: new Date().toISOString().split('T')[0], note: '' },
+        trancheForm: { amount: 0, note: '' },
         chatInput: '',
 
         patients: [],
         appointments: [],
-        payments: [],
+        tranches: [],
         chatMessages: [],
-
-        translations: {
-          ar: {
-            appTitle: "عيادة جراحة وطب الأسنان",
-            loginSubtitle: "يرجى تسجيل الدخول للحساب",
-            emailLabel: "البريد الإلكتروني",
-            passwordLabel: "كلمة السر",
-            loginBtn: "تسجيل الدخول",
-            roleDoctor: "حساب: دكتور (صلاحيات كاملة)",
-            roleAssistant: "حساب: مساعد (صلاحيات محدودة)",
-            logout: "خروج",
-            tabAgenda: "جدول المواعيد",
-            tabPatients: "سجلات المرضى",
-            tabFinances: "الإيرادات والدفعات",
-            tabChat: "المحادثة الداخلية",
-            agendaTitle: "جدول المواعيد الحالية",
-            newAppointment: "موعد جديد",
-            patientName: "اسم المريض",
-            phone: "الهاتف",
-            dateTime: "التاريخ والوقت",
-            treatment: "نوع العلاج",
-            cost: "التكلفة (د.ج)",
-            actions: "إجراءات",
-            whatsappReminder: "تذكير",
-            searchPatient: "بحث عن مريض...",
-            newPatient: "مريض جديد",
-            age: "العمر",
-            years: "سنة",
-            diagnosis: "التشخيص / ملاحظات",
-            history: "السجل",
-            addRdv: "+ موعد",
-            todayRevenue: "إيرادات اليوم",
-            totalRevenue: "إجمالي المداخيل",
-            paymentsList: "سجل الدفعات والتحصيلات",
-            newPayment: "تسجيل دفعة",
-            amount: "المبلغ (د.ج)",
-            notes: "ملاحظات",
-            internalChat: "المحادثة الداخلية للعيادة",
-            typeMessage: "اكتب رسالتك هنا...",
-            send: "إرسال",
-            patientHistory: "السجل الطبي والمادي للمريض",
-            cancel: "إلغاء",
-            save: "حفظ",
-            editPatient: "تعديل بيانات المريض",
-            editAppointment: "تعديل الموعد",
-            noData: "لا توجد بيانات مسجلة حالياً",
-            date: "التاريخ",
-            time: "الوقت"
-          },
-          fr: {
-            appTitle: "Cabinet de Chirurgie Dentaire",
-            loginSubtitle: "Veuillez vous connecter à votre compte",
-            emailLabel: "Adresse Email",
-            passwordLabel: "Mot de passe",
-            loginBtn: "Se Connecter",
-            roleDoctor: "Compte: Dr. Médecin (Accès Total)",
-            roleAssistant: "Compte: Assistant(e) (Accès Limité)",
-            logout: "Déconnexion",
-            tabAgenda: "Agenda & RDV",
-            tabPatients: "Dossiers Patients",
-            tabFinances: "Revenus & Versements",
-            tabChat: "Messagerie Interne",
-            agendaTitle: "Agenda des Rendez-vous",
-            newAppointment: "Nouveau RDV",
-            patientName: "Patient",
-            phone: "Téléphone",
-            dateTime: "Date & Heure",
-            treatment: "Soin",
-            cost: "Coût (DZD)",
-            actions: "Actions",
-            whatsappReminder: "Rappel",
-            searchPatient: "Rechercher patient...",
-            newPatient: "Nouveau Patient",
-            age: "Âge",
-            years: "ans",
-            diagnosis: "Diagnostic / Notes",
-            history: "Historique",
-            addRdv: "+ RDV",
-            todayRevenue: "Revenus du Jour",
-            totalRevenue: "Total Versements",
-            paymentsList: "Suivi des Versements",
-            newPayment: "Nouveau Versement",
-            amount: "Montant (DZD)",
-            notes: "Notes",
-            internalChat: "Messagerie Interne",
-            typeMessage: "Message...",
-            send: "Envoyer",
-            patientHistory: "Historique du Patient",
-            cancel: "Annuler",
-            save: "Enregistrer",
-            editPatient: "Modifier le Patient",
-            editAppointment: "Modifier le RDV",
-            noData: "Aucune donnée disponible",
-            date: "Date",
-            time: "Heure"
-          }
-        },
-
-        t(key) {
-          return this.translations[this.lang][key] || key;
-        },
-
-        toggleLang() {
-          this.lang = this.lang === 'ar' ? 'fr' : 'ar';
-        },
 
         initApp() {
           const check = setInterval(() => {
@@ -672,7 +568,7 @@
           try {
             await window.firebaseService.signInWithEmailAndPassword(window.firebaseService.auth, this.loginEmail, this.loginPassword);
           } catch (err) {
-            this.authError = "خطأ في البريد أو كلمة السر / Email ou mot de passe incorrect.";
+            this.authError = "Email ou mot de passe incorrect.";
           } finally {
             this.isLoading = false;
           }
@@ -682,45 +578,135 @@
           await window.firebaseService.signOut(window.firebaseService.auth);
         },
 
+        playNotificationSound() {
+          try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.25);
+          } catch(e){}
+        },
+
         loadCloudData() {
           const { db, collection, onSnapshot } = window.firebaseService;
           onSnapshot(collection(db, "cabinet_patients"), snap => this.patients = snap.docs.map(d => ({ id: d.id, ...d.data() })));
           onSnapshot(collection(db, "cabinet_appointments"), snap => this.appointments = snap.docs.map(d => ({ id: d.id, ...d.data() })));
-          onSnapshot(collection(db, "cabinet_payments"), snap => this.payments = snap.docs.map(d => ({ id: d.id, ...d.data() })));
+          onSnapshot(collection(db, "cabinet_tranches"), snap => this.tranches = snap.docs.map(d => ({ id: d.id, ...d.data() })));
+          
+          let firstChatLoad = true;
           onSnapshot(collection(db, "cabinet_chat"), snap => {
-            this.chatMessages = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (a.timestamp||0) - (b.timestamp||0));
+            const newMsgs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (a.timestamp||0) - (b.timestamp||0));
+            if (!firstChatLoad && newMsgs.length > this.chatMessages.length) {
+              const last = newMsgs[newMsgs.length - 1];
+              if (last && last.senderEmail !== this.userEmail) {
+                this.playNotificationSound();
+              }
+            }
+            firstChatLoad = false;
+            this.chatMessages = newMsgs;
           });
         },
 
+        // LOGIQUE AGENDA MENSUEL
+        get currentMonthName() {
+          return new Date(this.currentYear, this.currentMonth).toLocaleString('fr-FR', { month: 'long' }).toUpperCase();
+        },
+        get calendarBlanks() {
+          const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
+          return firstDay === 0 ? 6 : firstDay - 1;
+        },
+        get calendarDays() {
+          const totalDays = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+          const days = [];
+          const todayStr = new Date().toISOString().split('T')[0];
+          for (let i = 1; i <= totalDays; i++) {
+            const d = new Date(this.currentYear, this.currentMonth, i);
+            const dateStr = d.toISOString().split('T')[0];
+            days.push({ dayNum: i, dateStr, isToday: dateStr === todayStr });
+          }
+          return days;
+        },
+        prevMonth() {
+          if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
+          else { this.currentMonth--; }
+        },
+        nextMonth() {
+          if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
+          else { this.currentMonth++; }
+        },
+        selectCalendarDate(d) { this.selectedDate = d; },
+        getAppointmentsForDate(d) { return this.appointments.filter(a => a.date === d); },
+        get selectedDateAppointments() { return this.appointments.filter(a => a.date === this.selectedDate); },
+
+        // TRANSFERT D'UN RDV EN DOSSIER PATIENT
+        async convertToPatientDossier(app) {
+          const { db, collection, addDoc } = window.firebaseService;
+          await addDoc(collection(db, "cabinet_patients"), {
+            name: app.patientName,
+            phone: app.phone || '',
+            totalAmount: app.cost || 0,
+            diagnosis: `Venuz pour: ${app.treatment} le ${app.date} à ${app.time}`
+          });
+          alert(`Le RDV de ${app.patientName} a été transféré vers la liste des dossiers patients avec succès !`);
+        },
+
+        // LOGIQUE TRANCHES DE PAIEMENT
         get filteredPatients() { return this.patients.filter(p => (p.name || '').toLowerCase().includes(this.patientSearch.toLowerCase())); },
-        get todayRevenue() { const t = new Date().toISOString().split('T')[0]; return this.payments.filter(p => p.date === t).reduce((s,p) => s + (Number(p.amount)||0), 0); },
-        get totalPayments() { return this.payments.reduce((s,p) => s + (Number(p.amount)||0), 0); },
-
-        get patientAppointments() {
-          if (!this.selectedPatient.name) return [];
-          return this.appointments.filter(a => (a.patientName || '').trim().toLowerCase() === this.selectedPatient.name.trim().toLowerCase());
+        getPatientTotalPaid(patientId) {
+          return this.tranches.filter(t => t.patientId === patientId).reduce((s,t) => s + (Number(t.amount)||0), 0);
         },
-
-        get patientPayments() {
-          if (!this.selectedPatient.name) return [];
-          return this.payments.filter(p => (p.patientName || '').trim().toLowerCase() === this.selectedPatient.name.trim().toLowerCase());
+        get currentPatientTranches() {
+          return this.tranches.filter(t => t.patientId === this.selectedPatient.id);
         },
-
-        openPatientHistory(p) {
+        openTrancheModal(p) {
           this.selectedPatient = p;
-          this.showHistoryModal = true;
+          this.trancheForm = { amount: 0, note: '' };
+          this.showTrancheModal = true;
+        },
+        async addTrancheForPatient() {
+          const { db, collection, addDoc } = window.firebaseService;
+          const now = new Date();
+          const dateStr = now.toISOString().split('T')[0];
+          const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          await addDoc(collection(db, "cabinet_tranches"), {
+            patientId: this.selectedPatient.id,
+            patientName: this.selectedPatient.name,
+            amount: Number(this.trancheForm.amount) || 0,
+            note: this.trancheForm.note,
+            date: dateStr,
+            dateTime: `${dateStr} à ${timeStr}`,
+            timestamp: Date.now()
+          });
+          this.trancheForm = { amount: 0, note: '' };
         },
 
+        // CALCUL DE MDA3IL DU JOUR AUTOMATIQUE
+        get todayRevenue() {
+          const t = new Date().toISOString().split('T')[0];
+          return this.tranches.filter(tr => tr.date === t).reduce((s,tr) => s + (Number(tr.amount)||0), 0);
+        },
+        get totalPayments() {
+          return this.tranches.reduce((s,tr) => s + (Number(tr.amount)||0), 0);
+        },
+
+        // WHATSAPP
         getWhatsAppLink(app) {
           let phoneClean = (app.phone || '').replace(/[^0-9]/g, '');
           if (phoneClean.startsWith('0')) phoneClean = '+213' + phoneClean.substring(1);
-          const msg = encodeURIComponent(`مرحباً ${app.patientName}، نذكرك بموعدك في عيادة الأسنان يوم ${app.date} على الساعة ${app.time}.`);
+          const msg = encodeURIComponent(`Bonjour ${app.patientName}, nous vous rappelons votre rendez-vous au cabinet dentaire le ${app.date} à ${app.time}.`);
           return `https://wa.me/${phoneClean}?text=${msg}`;
         },
 
+        // MODALS ACTIONS
         openPatientModal() {
           this.editingPatientId = null;
-          this.patientForm = { name: '', phone: '', age: '', diagnosis: '' };
+          this.patientForm = { name: '', phone: '', totalAmount: 0, diagnosis: '' };
           this.showPatientModal = true;
         },
         editPatient(p) {
@@ -740,17 +726,7 @@
 
         openAppointmentModal() {
           this.editingAppointmentId = null;
-          this.appointmentForm = { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 2000 };
-          this.showAppointmentModal = true;
-        },
-        openAppointmentModalForPatient(p) {
-          this.openAppointmentModal();
-          this.appointmentForm.patientName = p.name;
-          this.appointmentForm.phone = p.phone || '';
-        },
-        editAppointment(app) {
-          this.editingAppointmentId = app.id;
-          this.appointmentForm = { ...app };
+          this.appointmentForm = { patientName: '', phone: '', date: this.selectedDate, time: '09:00', treatment: '', cost: 2000 };
           this.showAppointmentModal = true;
         },
         async saveAppointment() {
@@ -763,35 +739,34 @@
           this.showAppointmentModal = false;
         },
 
-        openPaymentModal() {
-          this.paymentForm = { patientName: '', amount: 0, date: new Date().toISOString().split('T')[0], note: '' };
-          this.showPaymentModal = true;
-        },
-        async savePayment() {
-          const { db, collection, addDoc } = window.firebaseService;
-          const timeStr = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-          await addDoc(collection(db, "cabinet_payments"), { ...this.paymentForm, dateTime: `${this.paymentForm.date} à ${timeStr}`, timestamp: Date.now() });
-          this.showPaymentModal = false;
-        },
-
         async deleteRecord(collectionName, id) {
-          if (confirm(this.lang === 'ar' ? 'هل أنت تأكد من الرغبة في الحذف؟' : 'Êtes-vous sûr de vouloir supprimer ?')) {
+          if (confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')) {
             const { db, doc, deleteDoc } = window.firebaseService;
             await deleteDoc(doc(db, collectionName, id));
           }
         },
 
+        // CHAT ACTIONS
         async sendChatMessage() {
           if (!this.chatInput.trim()) return;
-          const { db, collection, addDoc } = window.firebaseService;
-          await addDoc(collection(db, "cabinet_chat"), {
-            senderEmail: this.userEmail,
-            senderRole: this.userRole,
-            text: this.chatInput,
-            timestamp: Date.now(),
-            time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-          });
+          const { db, collection, addDoc, doc, updateDoc } = window.firebaseService;
+          if (this.editingChatMsgId) {
+            await updateDoc(doc(db, "cabinet_chat", this.editingChatMsgId), { text: this.chatInput });
+            this.editingChatMsgId = null;
+          } else {
+            await addDoc(collection(db, "cabinet_chat"), {
+              senderEmail: this.userEmail,
+              senderRole: this.userRole,
+              text: this.chatInput,
+              timestamp: Date.now(),
+              time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            });
+          }
           this.chatInput = '';
+        },
+        editChatMessage(msg) {
+          this.editingChatMsgId = msg.id;
+          this.chatInput = msg.text;
         }
       }
     }
