@@ -592,3 +592,183 @@
             osc.stop(ctx.currentTime + 0.25);
           } catch(e){}
         },
+loadCloudData() {
+          const { db, collection, onSnapshot } = window.firebaseService;
+          onSnapshot(collection(db, "cabinet_patients"), snap => this.patients = snap.docs.map(d => ({ id: d.id, ...d.data() })));
+          onSnapshot(collection(db, "cabinet_appointments"), snap => this.appointments = snap.docs.map(d => ({ id: d.id, ...d.data() })));
+          onSnapshot(collection(db, "cabinet_tranches"), snap => this.tranches = snap.docs.map(d => ({ id: d.id, ...d.data() })));
+          
+          let firstChatLoad = true;
+          onSnapshot(collection(db, "cabinet_chat"), snap => {
+            const newMsgs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (a.timestamp||0) - (b.timestamp||0));
+            if (!firstChatLoad && newMsgs.length > this.chatMessages.length) {
+              const last = newMsgs[newMsgs.length - 1];
+              if (last && last.senderEmail !== this.userEmail) {
+                this.playNotificationSound();
+              }
+            }
+            firstChatLoad = false;
+            this.chatMessages = newMsgs;
+          });
+        },
+
+        // LOGIQUE AGENDA MENSUEL
+        get currentMonthName() {
+          return new Date(this.currentYear, this.currentMonth).toLocaleString('fr-FR', { month: 'long' }).toUpperCase();
+        },
+        get calendarBlanks() {
+          const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
+          return firstDay === 0 ? 6 : firstDay - 1;
+        },
+        get calendarDays() {
+          const totalDays = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+          const days = [];
+          const todayStr = new Date().toISOString().split('T')[0];
+          for (let i = 1; i <= totalDays; i++) {
+            const d = new Date(this.currentYear, this.currentMonth, i);
+            const dateStr = d.toISOString().split('T')[0];
+            days.push({ dayNum: i, dateStr, isToday: dateStr === todayStr });
+          }
+          return days;
+        },
+        prevMonth() {
+          if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
+          else { this.currentMonth--; }
+        },
+        nextMonth() {
+          if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
+          else { this.currentMonth++; }
+        },
+        selectCalendarDate(d) { this.selectedDate = d; },
+        getAppointmentsForDate(d) { return this.appointments.filter(a => a.date === d); },
+        get selectedDateAppointments() { return this.appointments.filter(a => a.date === this.selectedDate); },
+
+        // TRANSFERT D'UN RDV EN DOSSIER PATIENT
+        async convertToPatientDossier(app) {
+          const { db, collection, addDoc } = window.firebaseService;
+          await addDoc(collection(db, "cabinet_patients"), {
+            name: app.patientName,
+            phone: app.phone || '',
+            totalAmount: app.cost || 0,
+            diagnosis: `Venu pour: ${app.treatment} le ${app.date} à ${app.time}`
+          });
+          alert(`Le RDV de ${app.patientName} a été transféré vers la liste des dossiers patients avec succès !`);
+        },
+
+        // LOGIQUE TRANCHES DE PAIEMENT
+        get filteredPatients() { return this.patients.filter(p => (p.name || '').toLowerCase().includes(this.patientSearch.toLowerCase())); },
+        getPatientTotalPaid(patientId) {
+          return this.tranches.filter(t => t.patientId === patientId).reduce((s,t) => s + (Number(t.amount)||0), 0);
+        },
+        get currentPatientTranches() {
+          return this.tranches.filter(t => t.patientId === this.selectedPatient.id);
+        },
+        openTrancheModal(p) {
+          this.selectedPatient = p;
+          this.trancheForm = { amount: 0, note: '' };
+          this.showTrancheModal = true;
+        },
+        async addTrancheForPatient() {
+          const { db, collection, addDoc } = window.firebaseService;
+          const now = new Date();
+          const dateStr = now.toISOString().split('T')[0];
+          const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          await addDoc(collection(db, "cabinet_tranches"), {
+            patientId: this.selectedPatient.id,
+            patientName: this.selectedPatient.name,
+            amount: Number(this.trancheForm.amount) || 0,
+            note: this.trancheForm.note,
+            date: dateStr,
+            dateTime: `${dateStr} à ${timeStr}`,
+            timestamp: Date.now()
+          });
+          this.trancheForm = { amount: 0, note: '' };
+        },
+
+        // CALCUL DE MDA3IL DU JOUR AUTOMATIQUE
+        get todayRevenue() {
+          const t = new Date().toISOString().split('T')[0];
+          return this.tranches.filter(tr => tr.date === t).reduce((s,tr) => s + (Number(tr.amount)||0), 0);
+        },
+        get totalPayments() {
+          return this.tranches.reduce((s,tr) => s + (Number(tr.amount)||0), 0);
+        },
+
+        // WHATSAPP
+        getWhatsAppLink(app) {
+          let phoneClean = (app.phone || '').replace(/[^0-9]/g, '');
+          if (phoneClean.startsWith('0')) phoneClean = '+213' + phoneClean.substring(1);
+          const msg = encodeURIComponent(`Bonjour ${app.patientName}, nous vous rappelons votre rendez-vous au cabinet dentaire le ${app.date} à ${app.time}.`);
+          return `https://wa.me/${phoneClean}?text=${msg}`;
+        },
+
+        // MODALS ACTIONS
+        openPatientModal() {
+          this.editingPatientId = null;
+          this.patientForm = { name: '', phone: '', totalAmount: 0, diagnosis: '' };
+          this.showPatientModal = true;
+        },
+        editPatient(p) {
+          this.editingPatientId = p.id;
+          this.patientForm = { ...p };
+          this.showPatientModal = true;
+        },
+        async savePatient() {
+          const { db, collection, addDoc, doc, updateDoc } = window.firebaseService;
+          if (this.editingPatientId) {
+            await updateDoc(doc(db, "cabinet_patients", this.editingPatientId), this.patientForm);
+          } else {
+            await addDoc(collection(db, "cabinet_patients"), this.patientForm);
+          }
+          this.showPatientModal = false;
+        },
+
+        openAppointmentModal() {
+          this.editingAppointmentId = null;
+          this.appointmentForm = { patientName: '', phone: '', date: this.selectedDate, time: '09:00', treatment: '', cost: 2000 };
+          this.showAppointmentModal = true;
+        },
+        async saveAppointment() {
+          const { db, collection, addDoc, doc, updateDoc } = window.firebaseService;
+          if (this.editingAppointmentId) {
+            await updateDoc(doc(db, "cabinet_appointments", this.editingAppointmentId), this.appointmentForm);
+          } else {
+            await addDoc(collection(db, "cabinet_appointments"), this.appointmentForm);
+          }
+          this.showAppointmentModal = false;
+        },
+
+        async deleteRecord(collectionName, id) {
+          if (confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')) {
+            const { db, doc, deleteDoc } = window.firebaseService;
+            await deleteDoc(doc(db, collectionName, id));
+          }
+        },
+
+        // CHAT ACTIONS
+        async sendChatMessage() {
+          if (!this.chatInput.trim()) return;
+          const { db, collection, addDoc, doc, updateDoc } = window.firebaseService;
+          if (this.editingChatMsgId) {
+            await updateDoc(doc(db, "cabinet_chat", this.editingChatMsgId), { text: this.chatInput });
+            this.editingChatMsgId = null;
+          } else {
+            await addDoc(collection(db, "cabinet_chat"), {
+              senderEmail: this.userEmail,
+              senderRole: this.userRole,
+              text: this.chatInput,
+              timestamp: Date.now(),
+              time: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+            });
+          }
+          this.chatInput = '';
+        },
+        editChatMessage(msg) {
+          this.editingChatMsgId = msg.id;
+          this.chatInput = msg.text;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
