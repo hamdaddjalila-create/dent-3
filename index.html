@@ -657,8 +657,6 @@
           const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
           return firstDay === 0 ? 6 : firstDay - 1;
         },
-        
-        // الدالة المصححة بدقة لمنع أي إزاحة في التواريخ
         get calendarDays() {
           const totalDays = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
           const days = [];
@@ -780,7 +778,14 @@
 
         openAppointmentModal() {
           this.editingAppointmentId = null;
-          this.appointmentForm = { patientName: '', phone: '', date: this.selectedDate, time: '09:00', treatment: '', cost: 2000 };
+          this.appointmentForm = { 
+            patientName: '', 
+            phone: '', 
+            date: this.selectedDate, // ربط مباشر وثابت بالتاريخ المحدد في الرزنامة
+            time: '09:00', 
+            treatment: '', 
+            cost: 2000 
+          };
           this.showAppointmentModal = true;
         },
         editAppointment(app) {
