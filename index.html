@@ -19,7 +19,7 @@
   <div x-show="!isAuthenticated" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
     <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-8 space-y-6 relative overflow-hidden">
       <div class="text-center space-y-2">
-        <div class="inline-flex bg-teal-500 text-white p-4 rounded-2xl shadow-lg shadow-teal-500/30 mb-2">
+        <div class="inline-flex bg-teal-600 text-white p-4 rounded-2xl shadow-lg shadow-teal-600/30 mb-2">
           <i class="fa-solid fa-tooth text-3xl"></i>
         </div>
         <h2 class="text-2xl font-black tracking-tight text-slate-900">Cabinet Dentaire</h2>
@@ -32,7 +32,7 @@
           <div class="relative">
             <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-400"></i>
             <input type="email" x-model="loginEmail" placeholder="medecin3@clinic.com" required 
-              class="w-full pl-10 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-teal-500 transition">
+              class="w-full pl-10 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-teal-600 transition">
           </div>
         </div>
 
@@ -41,7 +41,7 @@
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-400"></i>
             <input type="password" x-model="loginPassword" placeholder="••••••••" required 
-              class="w-full pl-10 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-teal-500 transition">
+              class="w-full pl-10 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-teal-600 transition">
           </div>
         </div>
 
@@ -172,10 +172,13 @@
                       <button @click="convertToPatientDossier(app)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-solid fa-user-check"></i> Convertir en dossier
                       </button>
+                      <button @click="editAppointment(app)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier RDV">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
                       <a :href="getWhatsAppLink(app)" target="_blank" class="bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-2 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-brands fa-whatsapp"></i> Rappel
                       </a>
-                      <button @click="deleteRecord('cabinet_appointments', app.id)" class="text-rose-600 hover:text-rose-800 p-1"><i class="fa-solid fa-trash"></i></button>
+                      <button @click="deleteRecord('cabinet_appointments', app.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer RDV"><i class="fa-solid fa-trash"></i></button>
                     </td>
                   </tr>
                 </template>
@@ -226,8 +229,8 @@
                       <button @click="openTrancheModal(p)" class="bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-solid fa-money-bill-transfer"></i> Tranches de paiement
                       </button>
-                      <button @click="editPatient(p)" class="text-sky-600 hover:text-sky-800 p-1"><i class="fa-solid fa-pen"></i></button>
-                      <button @click="deleteRecord('cabinet_patients', p.id)" class="text-rose-600 hover:text-rose-800 p-1"><i class="fa-solid fa-trash"></i></button>
+                      <button @click="editPatient(p)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier Patient"><i class="fa-solid fa-pen"></i></button>
+                      <button @click="deleteRecord('cabinet_patients', p.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer Patient"><i class="fa-solid fa-trash"></i></button>
                     </td>
                   </tr>
                 </template>
@@ -258,7 +261,6 @@
           </div>
         </div>
 
-        <!-- LISTE GLOBALE DES TRANCHES PAYEES AVEC ACTIONS -->
         <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm p-5 space-y-3">
           <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
             <i class="fa-solid fa-receipt text-teal-600"></i> Historique Global des Tranches Encaissées
@@ -368,7 +370,7 @@
   <div x-show="showAppointmentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
     <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
       <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
-        <i class="fa-solid fa-calendar-plus text-teal-600"></i> Prise de Rendez-vous
+        <i class="fa-solid fa-calendar-plus text-teal-600"></i> <span x-text="editingAppointmentId ? 'Modifier le RDV' : 'Prise de Rendez-vous'"></span>
       </h3>
       <div>
         <label class="block font-bold text-slate-700 mb-1">Nom du Patient</label>
@@ -403,7 +405,7 @@
     </div>
   </div>
 
-  <!-- MODAL TRANCHES DE PAIEMENT -->
+  <!-- MODAL TRANCHES DE PAIEMENT POUR UN PATIENT -->
   <div x-show="showTrancheModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
     <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-lg p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-200 pb-3">
@@ -457,9 +459,15 @@
                   <td class="p-2.5 font-mono text-slate-500" x-text="tr.dateTime"></td>
                   <td class="p-2.5 font-black text-emerald-600 font-mono" x-text="tr.amount + ' DZD'"></td>
                   <td class="p-2.5 text-slate-600" x-text="tr.note || '-'"></td>
-                  <td class="p-2.5 text-center space-x-1">
-                    <button @click="editTranche(tr)" class="text-sky-600 hover:text-sky-800 p-1"><i class="fa-solid fa-pen"></i></button>
-                    <button @click="deleteRecord('cabinet_tranches', tr.id)" class="text-rose-600 hover:text-rose-800 p-1"><i class="fa-solid fa-trash"></i></button>
+                  <td class="p-2.5 text-center space-x-1.5 whitespace-nowrap">
+                    <!-- ZER AT-TA'DEEL FA-QAT DAKHIL NAFIDHAT AL-AQSAT -->
+                    <button @click="editTranche(tr)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier la tranche">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <!-- ZER AL-HADHF -->
+                    <button @click="deleteRecord('cabinet_tranches', tr.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer la tranche">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
                   </td>
                 </tr>
               </template>
@@ -711,7 +719,6 @@
           this.trancheForm = { amount: 0, note: '' };
         },
 
-        // MODIFIER UNE TRANCHE DE PAIEMENT
         editTranche(tr) {
           this.editingTrancheId = tr.id;
           this.editingTrancheForm = { amount: tr.amount, note: tr.note || '' };
@@ -766,6 +773,11 @@
         openAppointmentModal() {
           this.editingAppointmentId = null;
           this.appointmentForm = { patientName: '', phone: '', date: this.selectedDate, time: '09:00', treatment: '', cost: 2000 };
+          this.showAppointmentModal = true;
+        },
+        editAppointment(app) {
+          this.editingAppointmentId = app.id;
+          this.appointmentForm = { ...app };
           this.showAppointmentModal = true;
         },
         async saveAppointment() {
