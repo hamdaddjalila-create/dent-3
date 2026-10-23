@@ -320,7 +320,7 @@
                   </div>
                   <p class="font-medium whitespace-pre-wrap text-xs" x-text="msg.text"></p>
                   
-                  <template x-if="msg.senderEmail === userEmail">
+                  <template x-if="msg.senderEmail === userEmail || userRole === 'doctor'">
                     <div class="flex justify-end gap-2 text-[10px] pt-1 border-t border-slate-200/40">
                       <button @click="editChatMessage(msg)" class="hover:underline opacity-90"><i class="fa-solid fa-pen"></i> Modifier</button>
                       <button @click="deleteRecord('cabinet_chat', msg.id)" class="hover:underline opacity-90 text-rose-300"><i class="fa-solid fa-trash"></i> Supprimer</button>
@@ -460,11 +460,9 @@
                   <td class="p-2.5 font-black text-emerald-600 font-mono" x-text="tr.amount + ' DZD'"></td>
                   <td class="p-2.5 text-slate-600" x-text="tr.note || '-'"></td>
                   <td class="p-2.5 text-center space-x-1.5 whitespace-nowrap">
-                    <!-- ZER AT-TA'DEEL FA-QAT DAKHIL NAFIDHAT AL-AQSAT -->
                     <button @click="editTranche(tr)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier la tranche">
                       <i class="fa-solid fa-pen"></i>
                     </button>
-                    <!-- ZER AL-HADHF -->
                     <button @click="deleteRecord('cabinet_tranches', tr.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer la tranche">
                       <i class="fa-solid fa-trash"></i>
                     </button>
@@ -551,7 +549,10 @@
 
         currentMonth: new Date().getMonth(),
         currentYear: new Date().getFullYear(),
-        selectedDate: new Date().toISOString().split('T')[0],
+        selectedDate: (() => {
+          const now = new Date();
+          return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        })(),
 
         showPatientModal: false,
         showAppointmentModal: false,
@@ -565,7 +566,7 @@
         selectedPatient: {},
 
         patientForm: { name: '', phone: '', totalAmount: 0, diagnosis: '' },
-        appointmentForm: { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 2000 },
+        appointmentForm: { patientName: '', phone: '', date: '', time: '09:00', treatment: '', cost: 2000 },
         trancheForm: { amount: 0, note: '' },
         editingTrancheForm: { amount: 0, note: '' },
         chatInput: '',
@@ -656,17 +657,23 @@
           const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
           return firstDay === 0 ? 6 : firstDay - 1;
         },
+        
+        // الدالة المصححة بدقة لمنع أي إزاحة في التواريخ
         get calendarDays() {
           const totalDays = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
           const days = [];
-          const todayStr = new Date().toISOString().split('T')[0];
+          const now = new Date();
+          const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+          
           for (let i = 1; i <= totalDays; i++) {
-            const d = new Date(this.currentYear, this.currentMonth, i);
-            const dateStr = d.toISOString().split('T')[0];
+            const m = String(this.currentMonth + 1).padStart(2, '0');
+            const d = String(i).padStart(2, '0');
+            const dateStr = `${this.currentYear}-${m}-${d}`;
             days.push({ dayNum: i, dateStr, isToday: dateStr === todayStr });
           }
           return days;
         },
+
         prevMonth() {
           if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
           else { this.currentMonth--; }
@@ -705,7 +712,7 @@
         async addTrancheForPatient() {
           const { db, collection, addDoc } = window.firebaseService;
           const now = new Date();
-          const dateStr = now.toISOString().split('T')[0];
+          const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
           const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
           await addDoc(collection(db, "cabinet_tranches"), {
             patientId: this.selectedPatient.id,
@@ -736,7 +743,8 @@
         },
 
         get todayRevenue() {
-          const t = new Date().toISOString().split('T')[0];
+          const now = new Date();
+          const t = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
           return this.tranches.filter(tr => tr.date === t).reduce((s,tr) => s + (Number(tr.amount)||0), 0);
         },
         get totalPayments() {
