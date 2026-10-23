@@ -66,7 +66,7 @@
           </div>
           <div>
             <h1 class="font-black text-base text-slate-900 leading-none">Cabinet Dentaire Pro</h1>
-            <p class="text-[11px] text-teal-600 font-semibold mt-1" x-text="userRole === 'doctor' ? 'Compte Médecin (Accès Total)' : 'Compte Assistant (Accès Limité)'"></p>
+            <p class="text-[11px] text-teal-600 font-semibold mt-1" x-text="userRole === 'doctor' ? 'Compte Médecin (Accès Total)' : 'Compte Assistant (Prise de RDV Uniquement)'"></p>
           </div>
         </div>
 
@@ -76,20 +76,29 @@
       </div>
     </header>
 
-    <!-- NAVIGATION -->
+    <!-- NAVIGATION (محدودة بحسب الدور) -->
     <nav class="bg-slate-100/80 border-b border-slate-200 sticky top-16 z-20 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto text-xs font-bold py-2.5">
+        <!-- الأجندة والمواعيد ظاهرة للجميع -->
         <button @click="activeTab = 'agenda'" :class="activeTab === 'agenda' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-calendar-days"></i> Agenda Mensuel & RDV
         </button>
-        <button @click="activeTab = 'patients'" :class="activeTab === 'patients' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-users"></i> Dossiers Patients & Tranches
-        </button>
+
+        <!-- ملفات المرضى ظاهرة للطبيب فقط -->
         <template x-if="userRole === 'doctor'">
-          <button @click="activeTab = 'finances'" :class="activeTab === 'finances' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
-            <i class="fa-solid fa-wallet"></i> Finances & Mda3il
+          <button @click="activeTab = 'patients'" :class="activeTab === 'patients' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-users"></i> Dossiers Patients & Tranches
           </button>
         </template>
+
+        <!-- المالية ظاهرة للطبيب فقط -->
+        <template x-if="userRole === 'doctor'">
+          <button @click="activeTab = 'finances'" :class="activeTab === 'finances' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-wallet"></i> Finances & Recette
+          </button>
+        </template>
+
+        <!-- الدردشة ظاهرة للجميع -->
         <button @click="activeTab = 'chat'" :class="activeTab === 'chat' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap relative">
           <i class="fa-solid fa-comments"></i> Messagerie Interne
         </button>
@@ -169,7 +178,7 @@
                     <td class="p-3 text-slate-600" x-text="app.treatment"></td>
                     <td class="p-3 font-bold text-emerald-600 font-mono" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
                     <td class="p-3 text-center space-x-1.5 whitespace-nowrap">
-                      <button @click="convertToPatientDossier(app)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                      <button x-show="userRole === 'doctor'" @click="convertToPatientDossier(app)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-solid fa-user-check"></i> Convertir en dossier
                       </button>
                       <button @click="editAppointment(app)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier RDV">
@@ -191,8 +200,8 @@
         </div>
       </div>
 
-      <!-- 2. DOSSIERS PATIENTS & TRANCHES DE PAIEMENT -->
-      <div x-show="activeTab === 'patients'" x-cloak class="space-y-4">
+      <!-- 2. DOSSIERS PATIENTS & TRANCHES DE PAIEMENT (DOCTOR ONLY) -->
+      <div x-show="activeTab === 'patients' && userRole === 'doctor'" x-cloak class="space-y-4">
         <div class="bg-white p-4 rounded-3xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
           <div class="relative w-full sm:w-80">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400"></i>
@@ -243,19 +252,21 @@
         </div>
       </div>
 
-      <!-- 3. FINANCES & MDA3IL -->
+      <!-- 3. FINANCES & RECETTE (DOCTOR ONLY) -->
       <div x-show="activeTab === 'finances' && userRole === 'doctor'" x-cloak class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Mda3il du Jour (Calcul Automatique)</p>
+            <!-- الجملة الجديدة والمصححة -->
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">RECETTE DU JOUR (CALCUL AUTOMATIQUE)</p>
             <h3 class="text-3xl font-black text-emerald-600 mt-2 font-mono" x-text="todayRevenue + ' DZD'">0 DZD</h3>
             <p class="text-[11px] text-slate-400 mt-1">Calculé à partir des tranches payées aujourd'hui</p>
           </div>
 
           <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
-            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Mda3il Global</p>
+            <!-- الجملة الجديدة والمصححة -->
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">TOTAL RECETTE GLOBALE</p>
             <h3 class="text-3xl font-black text-teal-600 mt-2 font-mono" x-text="totalPayments + ' DZD'">0 DZD</h3>
             <p class="text-[11px] text-slate-400 mt-1">Total de toutes les tranches encaissées</p>
           </div>
@@ -394,6 +405,7 @@
         <label class="block font-bold text-slate-700 mb-1">Soin / Traitement</label>
         <input type="text" x-model="appointmentForm.treatment" placeholder="Extraction, Détartrage..." required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
+      <!-- حقل السعر يظهر للطبيب فقط -->
       <div x-show="userRole === 'doctor'">
         <label class="block font-bold text-slate-700 mb-1">Prix Estimé (DZD)</label>
         <input type="number" x-model.number="appointmentForm.cost" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
@@ -592,6 +604,12 @@
               this.isAuthenticated = true;
               this.userEmail = user.email;
               this.userRole = (user.email.includes('medecin') || user.email.includes('doctor')) ? 'doctor' : 'assistant';
+              
+              // إذا كان المستخدم مساعداً، التأكد من فتح تبويب الأجندة تلقائياً
+              if (this.userRole === 'assistant') {
+                this.activeTab = 'agenda';
+              }
+              
               this.loadCloudData();
             } else {
               this.isAuthenticated = false;
@@ -781,7 +799,7 @@
           this.appointmentForm = { 
             patientName: '', 
             phone: '', 
-            date: this.selectedDate, // ربط مباشر وثابت بالتاريخ المحدد في الرزنامة
+            date: this.selectedDate,
             time: '09:00', 
             treatment: '', 
             cost: 2000 
