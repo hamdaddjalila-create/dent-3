@@ -13,41 +13,41 @@
     [x-cloak] { display: none !important; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased min-h-screen flex flex-col" x-data="dentalApp()" x-init="initApp()">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col" x-data="dentalApp()" x-init="initApp()">
 
   <!-- ÉCRAN DE CONNEXION -->
-  <div x-show="!isAuthenticated" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-2xl p-4">
-    <div class="bg-slate-900/90 border border-slate-800/80 rounded-3xl shadow-2xl w-full max-w-md p-8 space-y-6 relative overflow-hidden">
+  <div x-show="!isAuthenticated" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-8 space-y-6 relative overflow-hidden">
       <div class="text-center space-y-2">
-        <div class="inline-flex bg-gradient-to-tr from-teal-500 to-emerald-400 text-slate-950 p-4 rounded-2xl shadow-xl shadow-teal-500/20 mb-2">
+        <div class="inline-flex bg-teal-500 text-white p-4 rounded-2xl shadow-lg shadow-teal-500/30 mb-2">
           <i class="fa-solid fa-tooth text-3xl"></i>
         </div>
-        <h2 class="text-2xl font-black tracking-tight text-white">Cabinet Dentaire</h2>
-        <p class="text-xs text-slate-400 font-medium">Connectez-vous à votre espace de gestion</p>
+        <h2 class="text-2xl font-black tracking-tight text-slate-900">Cabinet Dentaire</h2>
+        <p class="text-xs text-slate-500 font-medium">Connectez-vous à votre espace de gestion</p>
       </div>
 
       <form @submit.prevent="login()" class="space-y-4 text-xs">
         <div>
-          <label class="block font-bold text-slate-300 mb-1.5">Adresse Email</label>
+          <label class="block font-bold text-slate-700 mb-1.5">Adresse Email</label>
           <div class="relative">
-            <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-500"></i>
+            <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-400"></i>
             <input type="email" x-model="loginEmail" placeholder="medecin3@clinic.com" required 
-              class="w-full pl-10 pr-3 py-3 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500 transition">
+              class="w-full pl-10 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-teal-500 transition">
           </div>
         </div>
 
         <div>
-          <label class="block font-bold text-slate-300 mb-1.5">Mot de passe</label>
+          <label class="block font-bold text-slate-700 mb-1.5">Mot de passe</label>
           <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500"></i>
+            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-400"></i>
             <input type="password" x-model="loginPassword" placeholder="••••••••" required 
-              class="w-full pl-10 pr-3 py-3 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500 transition">
+              class="w-full pl-10 pr-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-teal-500 transition">
           </div>
         </div>
 
-        <div x-show="authError" class="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl text-center font-bold text-xs" x-text="authError"></div>
+        <div x-show="authError" class="p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-center font-bold text-xs" x-text="authError"></div>
 
-        <button type="submit" :disabled="isLoading" class="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 py-3.5 rounded-xl font-bold text-xs transition shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2">
+        <button type="submit" :disabled="isLoading" class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3.5 rounded-xl font-bold text-xs transition shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2">
           <span x-show="!isLoading" class="flex items-center gap-2"><i class="fa-solid fa-right-to-bracket"></i> Se Connecter</span>
           <span x-show="isLoading" class="animate-spin"><i class="fa-solid fa-circle-notch"></i></span>
         </button>
@@ -58,39 +58,39 @@
   <!-- APPLICATION PRINCIPALE -->
   <div x-show="isAuthenticated" x-cloak class="flex-1 flex flex-col">
     <!-- EN-TÊTE -->
-    <header class="bg-slate-900/80 border-b border-slate-800/80 sticky top-0 z-30 backdrop-blur-md">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="bg-gradient-to-tr from-teal-500 to-emerald-400 text-slate-950 p-2.5 rounded-xl shadow-lg shadow-teal-500/10 font-black text-xl">
+          <div class="bg-teal-600 text-white p-2.5 rounded-xl shadow-md font-black text-xl">
             <i class="fa-solid fa-tooth"></i>
           </div>
           <div>
-            <h1 class="font-black text-base text-slate-100 leading-none">Cabinet Dentaire Pro</h1>
-            <p class="text-[11px] text-teal-400 font-semibold mt-1" x-text="userRole === 'doctor' ? 'Compte Médecin (Accès Total)' : 'Compte Assistant (Accès Limité)'"></p>
+            <h1 class="font-black text-base text-slate-900 leading-none">Cabinet Dentaire Pro</h1>
+            <p class="text-[11px] text-teal-600 font-semibold mt-1" x-text="userRole === 'doctor' ? 'Compte Médecin (Accès Total)' : 'Compte Assistant (Accès Limité)'"></p>
           </div>
         </div>
 
-        <button @click="logout()" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
+        <button @click="logout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
           <i class="fa-solid fa-power-off"></i> Déconnexion
         </button>
       </div>
     </header>
 
     <!-- NAVIGATION -->
-    <nav class="bg-slate-900/40 border-b border-slate-800/60 sticky top-16 z-20 backdrop-blur-md">
+    <nav class="bg-slate-100/80 border-b border-slate-200 sticky top-16 z-20 backdrop-blur-md">
       <div class="max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto text-xs font-bold py-2.5">
-        <button @click="activeTab = 'agenda'" :class="activeTab === 'agenda' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+        <button @click="activeTab = 'agenda'" :class="activeTab === 'agenda' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-calendar-days"></i> Agenda Mensuel & RDV
         </button>
-        <button @click="activeTab = 'patients'" :class="activeTab === 'patients' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+        <button @click="activeTab = 'patients'" :class="activeTab === 'patients' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-users"></i> Dossiers Patients & Tranches
         </button>
         <template x-if="userRole === 'doctor'">
-          <button @click="activeTab = 'finances'" :class="activeTab === 'finances' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
+          <button @click="activeTab = 'finances'" :class="activeTab === 'finances' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
             <i class="fa-solid fa-wallet"></i> Finances & Mda3il
           </button>
         </template>
-        <button @click="activeTab = 'chat'" :class="activeTab === 'chat' ? 'bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20' : 'bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-slate-200'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap relative">
+        <button @click="activeTab = 'chat'" :class="activeTab === 'chat' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap relative">
           <i class="fa-solid fa-comments"></i> Messagerie Interne
         </button>
       </div>
@@ -101,16 +101,16 @@
 
       <!-- 1. AGENDA MENSUEL & RDV -->
       <div x-show="activeTab === 'agenda'" class="space-y-6">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
+        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
-            <h2 class="font-bold text-slate-200 text-base flex items-center gap-2">
-              <i class="fa-solid fa-calendar-alt text-teal-400"></i>
+            <h2 class="font-bold text-slate-900 text-base flex items-center gap-2">
+              <i class="fa-solid fa-calendar-alt text-teal-600"></i>
               <span x-text="currentMonthName + ' ' + currentYear"></span>
             </h2>
             <div class="flex items-center gap-2">
-              <button @click="prevMonth()" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 transition"><i class="fa-solid fa-chevron-left"></i></button>
-              <button @click="nextMonth()" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 transition"><i class="fa-solid fa-chevron-right"></i></button>
-              <button @click="openAppointmentModal()" class="ml-2 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md shadow-teal-500/10">
+              <button @click="prevMonth()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 transition"><i class="fa-solid fa-chevron-left"></i></button>
+              <button @click="nextMonth()" class="p-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-slate-700 transition"><i class="fa-solid fa-chevron-right"></i></button>
+              <button @click="openAppointmentModal()" class="ml-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md">
                 <i class="fa-solid fa-calendar-plus"></i> Nouveau RDV
               </button>
             </div>
@@ -119,19 +119,19 @@
           <!-- GRILLE DU CALENDRIER -->
           <div class="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs">
             <template x-for="day in ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']">
-              <div class="py-2 font-bold text-slate-500 uppercase tracking-wider" x-text="day"></div>
+              <div class="py-2 font-bold text-slate-400 uppercase tracking-wider" x-text="day"></div>
             </template>
             <template x-for="blank in calendarBlanks">
-              <div class="h-20 bg-slate-950/20 rounded-2xl border border-slate-900/50"></div>
+              <div class="h-20 bg-slate-50/50 rounded-2xl border border-slate-100"></div>
             </template>
             <template x-for="dateObj in calendarDays" :key="dateObj.dateStr">
               <div @click="selectCalendarDate(dateObj.dateStr)" 
-                :class="selectedDate === dateObj.dateStr ? 'border-teal-500 bg-teal-500/10' : 'border-slate-800/80 bg-slate-950/40 hover:border-slate-700'"
+                :class="selectedDate === dateObj.dateStr ? 'border-teal-600 bg-teal-50' : 'border-slate-200 bg-white hover:border-slate-300'"
                 class="h-20 p-2 rounded-2xl border transition cursor-pointer flex flex-col justify-between text-left relative overflow-hidden">
-                <span class="font-bold text-xs" :class="dateObj.isToday ? 'bg-teal-500 text-slate-950 px-2 py-0.5 rounded-lg' : 'text-slate-400'" x-text="dateObj.dayNum"></span>
+                <span class="font-bold text-xs" :class="dateObj.isToday ? 'bg-teal-600 text-white px-2 py-0.5 rounded-lg' : 'text-slate-500'" x-text="dateObj.dayNum"></span>
                 <div class="space-y-1 overflow-y-auto max-h-12">
                   <template x-for="app in getAppointmentsForDate(dateObj.dateStr)" :key="app.id">
-                    <div class="bg-teal-500/20 text-teal-300 text-[10px] p-1 rounded-md truncate font-medium border border-teal-500/30">
+                    <div class="bg-teal-100 text-teal-800 text-[10px] p-1 rounded-md truncate font-medium border border-teal-200">
                       <span class="font-mono font-bold" x-text="app.time"></span> - <span x-text="app.patientName"></span>
                     </div>
                   </template>
@@ -142,15 +142,15 @@
         </div>
 
         <!-- LISTE DES RDV DU JOUR SELECTIONNE -->
-        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl space-y-3 p-5">
-          <h3 class="font-bold text-sm text-slate-300 flex items-center justify-between">
-            <span>Rendez-vous du : <span class="text-teal-400 font-mono" x-text="selectedDate"></span></span>
-            <span class="text-xs bg-slate-800 px-3 py-1 rounded-xl text-slate-400" x-text="selectedDateAppointments.length + ' RDV'"></span>
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm space-y-3 p-5">
+          <h3 class="font-bold text-sm text-slate-800 flex items-center justify-between">
+            <span>Rendez-vous du : <span class="text-teal-600 font-mono" x-text="selectedDate"></span></span>
+            <span class="text-xs bg-slate-100 px-3 py-1 rounded-xl text-slate-600 font-bold" x-text="selectedDateAppointments.length + ' RDV'"></span>
           </h3>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-800/60 text-slate-400 font-bold border-b border-slate-800">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                 <tr>
                   <th class="p-3">Heure & Date</th>
                   <th class="p-3">Patient</th>
@@ -160,27 +160,27 @@
                   <th class="p-3 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-800/60">
+              <tbody class="divide-y divide-slate-100">
                 <template x-for="app in selectedDateAppointments" :key="app.id">
-                  <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3 font-mono font-bold text-teal-400" x-text="app.date + ' à ' + app.time"></td>
-                    <td class="p-3 font-bold text-slate-200" x-text="app.patientName"></td>
-                    <td class="p-3 font-mono text-slate-400" x-text="app.phone || '-'"></td>
-                    <td class="p-3 text-slate-300" x-text="app.treatment"></td>
-                    <td class="p-3 font-bold text-emerald-400 font-mono" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
+                  <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-mono font-bold text-teal-700" x-text="app.date + ' à ' + app.time"></td>
+                    <td class="p-3 font-bold text-slate-800" x-text="app.patientName"></td>
+                    <td class="p-3 font-mono text-slate-500" x-text="app.phone || '-'"></td>
+                    <td class="p-3 text-slate-600" x-text="app.treatment"></td>
+                    <td class="p-3 font-bold text-emerald-600 font-mono" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
                     <td class="p-3 text-center space-x-1.5 whitespace-nowrap">
-                      <button @click="convertToPatientDossier(app)" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                      <button @click="convertToPatientDossier(app)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-solid fa-user-check"></i> Convertir en dossier
                       </button>
-                      <a :href="getWhatsAppLink(app)" target="_blank" class="bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 px-2 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                      <a :href="getWhatsAppLink(app)" target="_blank" class="bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-2 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-brands fa-whatsapp"></i> Rappel
                       </a>
-                      <button @click="deleteRecord('cabinet_appointments', app.id)" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                      <button @click="deleteRecord('cabinet_appointments', app.id)" class="text-rose-600 hover:text-rose-800 p-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                   </tr>
                 </template>
                 <template x-if="selectedDateAppointments.length === 0">
-                  <tr><td colspan="6" class="p-6 text-center text-slate-500 font-medium">Aucun rendez-vous pour cette date.</td></tr>
+                  <tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Aucun rendez-vous pour cette date.</td></tr>
                 </template>
               </tbody>
             </table>
@@ -190,21 +190,21 @@
 
       <!-- 2. DOSSIERS PATIENTS & TRANCHES DE PAIEMENT -->
       <div x-show="activeTab === 'patients'" x-cloak class="space-y-4">
-        <div class="bg-slate-900 p-4 rounded-3xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
           <div class="relative w-full sm:w-80">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500"></i>
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400"></i>
             <input type="text" x-model="patientSearch" placeholder="Rechercher un patient..." 
-              class="w-full pl-10 pr-3 py-2 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-teal-500">
+              class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-teal-600">
           </div>
-          <button @click="openPatientModal()" class="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-teal-500/10">
+          <button @click="openPatientModal()" class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md">
             <i class="fa-solid fa-user-plus"></i> Nouveau Patient
           </button>
         </div>
 
-        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                 <tr>
                   <th class="p-3.5">Patient</th>
                   <th class="p-3.5">Téléphone</th>
@@ -214,25 +214,25 @@
                   <th class="p-3.5 text-center">Actions & Tranches</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-800/60">
+              <tbody class="divide-y divide-slate-100">
                 <template x-for="p in filteredPatients" :key="p.id">
-                  <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3.5 font-bold text-slate-200" x-text="p.name"></td>
-                    <td class="p-3.5 font-mono text-slate-400" x-text="p.phone || '-'"></td>
-                    <td class="p-3.5 font-bold text-slate-300 font-mono" x-text="(p.totalAmount || 0) + ' DZD'"></td>
-                    <td class="p-3.5 font-bold text-emerald-400 font-mono" x-text="getPatientTotalPaid(p.id) + ' DZD'"></td>
-                    <td class="p-3.5 font-bold font-mono" :class="(p.totalAmount - getPatientTotalPaid(p.id)) > 0 ? 'text-rose-400' : 'text-slate-500'" x-text="(p.totalAmount - getPatientTotalPaid(p.id)) + ' DZD'"></td>
+                  <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3.5 font-bold text-slate-800" x-text="p.name"></td>
+                    <td class="p-3.5 font-mono text-slate-500" x-text="p.phone || '-'"></td>
+                    <td class="p-3.5 font-bold text-slate-700 font-mono" x-text="(p.totalAmount || 0) + ' DZD'"></td>
+                    <td class="p-3.5 font-bold text-emerald-600 font-mono" x-text="getPatientTotalPaid(p.id) + ' DZD'"></td>
+                    <td class="p-3.5 font-bold font-mono" :class="(p.totalAmount - getPatientTotalPaid(p.id)) > 0 ? 'text-rose-600' : 'text-slate-400'" x-text="(p.totalAmount - getPatientTotalPaid(p.id)) + ' DZD'"></td>
                     <td class="p-3.5 text-center space-x-1.5 whitespace-nowrap">
-                      <button @click="openTrancheModal(p)" class="bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/20 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                      <button @click="openTrancheModal(p)" class="bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
                         <i class="fa-solid fa-money-bill-transfer"></i> Tranches de paiement
                       </button>
-                      <button @click="editPatient(p)" class="text-sky-400 hover:text-sky-300 p-1"><i class="fa-solid fa-pen"></i></button>
-                      <button @click="deleteRecord('cabinet_patients', p.id)" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                      <button @click="editPatient(p)" class="text-sky-600 hover:text-sky-800 p-1"><i class="fa-solid fa-pen"></i></button>
+                      <button @click="deleteRecord('cabinet_patients', p.id)" class="text-rose-600 hover:text-rose-800 p-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                   </tr>
                 </template>
                 <template x-if="filteredPatients.length === 0">
-                  <tr><td colspan="6" class="p-8 text-center text-slate-500 font-medium">Aucun patient enregistré.</td></tr>
+                  <tr><td colspan="6" class="p-8 text-center text-slate-400 font-medium">Aucun patient enregistré.</td></tr>
                 </template>
               </tbody>
             </table>
@@ -243,43 +243,56 @@
       <!-- 3. FINANCES & MDA3IL -->
       <div x-show="activeTab === 'finances' && userRole === 'doctor'" x-cloak class="space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Mda3il du Jour (Calcul Automatique)</p>
-            <h3 class="text-3xl font-black text-emerald-400 mt-2 font-mono" x-text="todayRevenue + ' DZD'">0 DZD</h3>
-            <p class="text-[11px] text-slate-500 mt-1">Calculé à partir des tranches payées aujourd'hui</p>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Mda3il du Jour (Calcul Automatique)</p>
+            <h3 class="text-3xl font-black text-emerald-600 mt-2 font-mono" x-text="todayRevenue + ' DZD'">0 DZD</h3>
+            <p class="text-[11px] text-slate-400 mt-1">Calculé à partir des tranches payées aujourd'hui</p>
           </div>
 
-          <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
-            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Mda3il Global</p>
-            <h3 class="text-3xl font-black text-teal-400 mt-2 font-mono" x-text="totalPayments + ' DZD'">0 DZD</h3>
-            <p class="text-[11px] text-slate-500 mt-1">Total de toutes les tranches encaissées</p>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Mda3il Global</p>
+            <h3 class="text-3xl font-black text-teal-600 mt-2 font-mono" x-text="totalPayments + ' DZD'">0 DZD</h3>
+            <p class="text-[11px] text-slate-400 mt-1">Total de toutes les tranches encaissées</p>
           </div>
         </div>
 
-        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl p-5 space-y-3">
-          <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2">
-            <i class="fa-solid fa-receipt text-teal-400"></i> Historique Global des Tranches Encaissées
+        <!-- LISTE GLOBALE DES TRANCHES PAYEES AVEC ACTIONS -->
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm p-5 space-y-3">
+          <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-teal-600"></i> Historique Global des Tranches Encaissées
           </h3>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
                 <tr>
                   <th class="p-3">Patient</th>
                   <th class="p-3">Montant Tranche</th>
                   <th class="p-3">Date & Heure exacte</th>
                   <th class="p-3">Note / Remarque</th>
+                  <th class="p-3 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-800/60">
+              <tbody class="divide-y divide-slate-100">
                 <template x-for="t in tranches" :key="t.id">
-                  <tr class="hover:bg-slate-800/40 transition">
-                    <td class="p-3 font-bold text-slate-200" x-text="t.patientName"></td>
-                    <td class="p-3 font-black text-emerald-400 font-mono" x-text="t.amount + ' DZD'"></td>
-                    <td class="p-3 font-mono text-slate-400" x-text="t.dateTime"></td>
-                    <td class="p-3 text-slate-400" x-text="t.note || '-'"></td>
+                  <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-bold text-slate-800" x-text="t.patientName"></td>
+                    <td class="p-3 font-black text-emerald-600 font-mono" x-text="t.amount + ' DZD'"></td>
+                    <td class="p-3 font-mono text-slate-500" x-text="t.dateTime"></td>
+                    <td class="p-3 text-slate-600" x-text="t.note || '-'"></td>
+                    <td class="p-3 text-center space-x-2 whitespace-nowrap">
+                      <button @click="editTranche(t)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button @click="deleteRecord('cabinet_tranches', t.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
                   </tr>
+                </template>
+                <template x-if="tranches.length === 0">
+                  <tr><td colspan="5" class="p-6 text-center text-slate-400 font-medium">Aucune tranche encaissée.</td></tr>
                 </template>
               </tbody>
             </table>
@@ -289,16 +302,16 @@
 
       <!-- 4. MESSAGERIE INTERNE -->
       <div x-show="activeTab === 'chat'" x-cloak class="space-y-4">
-        <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden flex flex-col h-[560px] shadow-2xl">
-          <div class="bg-slate-800/80 border-b border-slate-800 p-4 font-bold text-sm text-slate-200 flex items-center justify-between">
-            <span class="flex items-center gap-2"><i class="fa-solid fa-comments text-teal-400"></i> Messagerie Interne du Cabinet</span>
-            <span class="text-[11px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20"><i class="fa-solid fa-volume-high"></i> Alerte Sonore Activée</span>
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col h-[560px] shadow-sm">
+          <div class="bg-slate-50 border-b border-slate-200 p-4 font-bold text-sm text-slate-800 flex items-center justify-between">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-comments text-teal-600"></i> Messagerie Interne du Cabinet</span>
+            <span class="text-[11px] bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200"><i class="fa-solid fa-volume-high"></i> Alerte Sonore Activée</span>
           </div>
 
-          <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-950/40" id="chatContainer">
+          <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/50" id="chatContainer">
             <template x-for="msg in chatMessages" :key="msg.id">
               <div :class="msg.senderEmail === userEmail ? 'flex justify-end' : 'flex justify-start'">
-                <div :class="msg.senderEmail === userEmail ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-slate-200 border border-slate-700/60'" class="max-w-md rounded-2xl p-3 text-xs space-y-1.5 shadow-md relative group">
+                <div :class="msg.senderEmail === userEmail ? 'bg-teal-600 text-white' : 'bg-white text-slate-800 border border-slate-200'" class="max-w-md rounded-2xl p-3 text-xs space-y-1.5 shadow-sm relative group">
                   <div class="flex justify-between items-center gap-4 text-[10px] opacity-75 font-bold">
                     <span x-text="msg.senderRole === 'doctor' ? 'Dr. Médecin' : 'Assistant(e)'"></span>
                     <span x-text="msg.time"></span>
@@ -306,9 +319,9 @@
                   <p class="font-medium whitespace-pre-wrap text-xs" x-text="msg.text"></p>
                   
                   <template x-if="msg.senderEmail === userEmail">
-                    <div class="flex justify-end gap-2 text-[10px] pt-1 border-t border-slate-950/10">
-                      <button @click="editChatMessage(msg)" class="hover:underline opacity-80"><i class="fa-solid fa-pen"></i> Modifier</button>
-                      <button @click="deleteRecord('cabinet_chat', msg.id)" class="hover:underline opacity-80 text-rose-900"><i class="fa-solid fa-trash"></i> Supprimer</button>
+                    <div class="flex justify-end gap-2 text-[10px] pt-1 border-t border-slate-200/40">
+                      <button @click="editChatMessage(msg)" class="hover:underline opacity-90"><i class="fa-solid fa-pen"></i> Modifier</button>
+                      <button @click="deleteRecord('cabinet_chat', msg.id)" class="hover:underline opacity-90 text-rose-300"><i class="fa-solid fa-trash"></i> Supprimer</button>
                     </div>
                   </template>
                 </div>
@@ -316,9 +329,9 @@
             </template>
           </div>
 
-          <form @submit.prevent="sendChatMessage()" class="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
-            <input type="text" x-model="chatInput" placeholder="Écrivez votre message ici..." required class="flex-1 p-3 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-teal-500">
-            <button type="submit" class="bg-teal-500 hover:bg-teal-400 text-slate-950 px-5 py-3 rounded-xl font-bold text-xs transition shadow-md shadow-teal-500/10 flex items-center gap-2">
+          <form @submit.prevent="sendChatMessage()" class="p-3 bg-white border-t border-slate-200 flex gap-2">
+            <input type="text" x-model="chatInput" placeholder="Écrivez votre message ici..." required class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-teal-600">
+            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-3 rounded-xl font-bold text-xs transition shadow-md flex items-center gap-2">
               <i class="fa-solid fa-paper-plane"></i> Envoyer
             </button>
           </form>
@@ -330,86 +343,107 @@
 
   <!-- MODALS -->
 
-  <!-- MODAL RDV -->
-  <div x-show="showAppointmentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
-      <h3 class="font-bold text-sm text-slate-100 flex items-center gap-2">
-        <i class="fa-solid fa-calendar-plus text-teal-400"></i> Prise de Rendez-vous
+  <!-- MODAL EDIT TRANCHE -->
+  <div x-show="showEditTrancheModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
+      <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-pen text-teal-600"></i> Modifier la Tranche de Paiement
       </h3>
       <div>
-        <label class="block font-bold text-slate-300 mb-1">Nom du Patient</label>
-        <input type="text" x-model="appointmentForm.patientName" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-700 mb-1">Montant (DZD)</label>
+        <input type="number" x-model.number="editingTrancheForm.amount" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1">Numéro Téléphone</label>
-        <input type="text" x-model="appointmentForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-700 mb-1">Note / Remarque</label>
+        <input type="text" x-model="editingTrancheForm.note" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" @click="showEditTrancheModal = false" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">Annuler</button>
+        <button type="button" @click="saveTrancheEdit()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold transition">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RDV -->
+  <div x-show="showAppointmentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
+      <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-plus text-teal-600"></i> Prise de Rendez-vous
+      </h3>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Nom du Patient</label>
+        <input type="text" x-model="appointmentForm.patientName" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+      </div>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Numéro Téléphone</label>
+        <input type="text" x-model="appointmentForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block font-bold text-slate-300 mb-1">Date exacte</label>
-          <input type="date" x-model="appointmentForm.date" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+          <label class="block font-bold text-slate-700 mb-1">Date exacte</label>
+          <input type="date" x-model="appointmentForm.date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
         </div>
         <div>
-          <label class="block font-bold text-slate-300 mb-1">Heure exacte</label>
-          <input type="time" x-model="appointmentForm.time" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+          <label class="block font-bold text-slate-700 mb-1">Heure exacte</label>
+          <input type="time" x-model="appointmentForm.time" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
         </div>
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1">Soin / Traitement</label>
-        <input type="text" x-model="appointmentForm.treatment" placeholder="Extraction, Détartrage..." required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-700 mb-1">Soin / Traitement</label>
+        <input type="text" x-model="appointmentForm.treatment" placeholder="Extraction, Détartrage..." required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
       <div x-show="userRole === 'doctor'">
-        <label class="block font-bold text-slate-300 mb-1">Prix Estimé (DZD)</label>
-        <input type="number" x-model.number="appointmentForm.cost" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-700 mb-1">Prix Estimé (DZD)</label>
+        <input type="number" x-model.number="appointmentForm.cost" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button type="button" @click="showAppointmentModal = false" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold">Annuler</button>
-        <button type="button" @click="saveAppointment()" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold transition">Enregistrer RDV</button>
+        <button type="button" @click="showAppointmentModal = false" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">Annuler</button>
+        <button type="button" @click="saveAppointment()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold transition">Enregistrer RDV</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL TRANCHES DE PAIEMENT -->
-  <div x-show="showTrancheModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-lg p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-sm text-teal-400 flex items-center gap-2">
+  <div x-show="showTrancheModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-lg p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+        <h3 class="font-bold text-sm text-teal-600 flex items-center gap-2">
           <i class="fa-solid fa-money-bill-wave"></i> Suivi des Tranches de Paiement
         </h3>
-        <button @click="showTrancheModal = false" class="text-slate-500 hover:text-slate-300 font-bold"><i class="fa-solid fa-xmark"></i></button>
+        <button @click="showTrancheModal = false" class="text-slate-400 hover:text-slate-600 font-bold"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="bg-slate-800/50 p-4 rounded-2xl border border-slate-800 space-y-2">
-        <p class="font-bold text-slate-200">Patient: <span class="text-teal-400" x-text="selectedPatient.name"></span></p>
-        <div class="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1 border-t border-slate-800">
-          <div>Total: <span class="font-bold text-slate-300" x-text="(selectedPatient.totalAmount || 0) + ' DZD'"></span></div>
-          <div>Payé: <span class="font-bold text-emerald-400" x-text="getPatientTotalPaid(selectedPatient.id) + ' DZD'"></span></div>
-          <div>Reste: <span class="font-bold text-rose-400" x-text="((selectedPatient.totalAmount || 0) - getPatientTotalPaid(selectedPatient.id)) + ' DZD'"></span></div>
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+        <p class="font-bold text-slate-800">Patient: <span class="text-teal-600" x-text="selectedPatient.name"></span></p>
+        <div class="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1 border-t border-slate-200">
+          <div>Total: <span class="font-bold text-slate-800" x-text="(selectedPatient.totalAmount || 0) + ' DZD'"></span></div>
+          <div>Payé: <span class="font-bold text-emerald-600" x-text="getPatientTotalPaid(selectedPatient.id) + ' DZD'"></span></div>
+          <div>Reste: <span class="font-bold text-rose-600" x-text="((selectedPatient.totalAmount || 0) - getPatientTotalPaid(selectedPatient.id)) + ' DZD'"></span></div>
         </div>
       </div>
 
-      <form @submit.prevent="addTrancheForPatient()" class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800/80 space-y-3">
-        <h4 class="font-bold text-slate-300">Ajouter une nouvelle tranche payée</h4>
+      <form @submit.prevent="addTrancheForPatient()" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+        <h4 class="font-bold text-slate-800">Ajouter une nouvelle tranche payée</h4>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-slate-400 mb-1">Montant Tranche (DZD)</label>
-            <input type="number" x-model.number="trancheForm.amount" required class="w-full p-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-100">
+            <label class="block font-bold text-slate-600 mb-1">Montant Tranche (DZD)</label>
+            <input type="number" x-model.number="trancheForm.amount" required class="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-800">
           </div>
           <div>
-            <label class="block font-bold text-slate-400 mb-1">Note / Remarque</label>
-            <input type="text" x-model="trancheForm.note" placeholder="Versement 1..." class="w-full p-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-100">
+            <label class="block font-bold text-slate-600 mb-1">Note / Remarque</label>
+            <input type="text" x-model="trancheForm.note" placeholder="Versement 1..." class="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-800">
           </div>
         </div>
-        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-2 rounded-xl font-bold transition flex items-center justify-center gap-1">
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl font-bold transition flex items-center justify-center gap-1">
           <i class="fa-solid fa-plus"></i> Enregistrer la tranche (Date & Heure auto)
         </button>
       </form>
 
       <div class="space-y-2">
-        <h4 class="font-bold text-slate-400">Historique des tranches versées</h4>
-        <div class="border border-slate-800 rounded-xl overflow-hidden">
+        <h4 class="font-bold text-slate-600">Historique des tranches versées</h4>
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
           <table class="w-full text-left">
-            <thead class="bg-slate-800/80 text-slate-400 font-bold border-b border-slate-800">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
               <tr>
                 <th class="p-2.5">Date & Heure</th>
                 <th class="p-2.5">Montant Versé</th>
@@ -417,19 +451,20 @@
                 <th class="p-2.5 text-center">Action</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-800/60">
+            <tbody class="divide-y divide-slate-100">
               <template x-for="tr in currentPatientTranches" :key="tr.id">
                 <tr>
-                  <td class="p-2.5 font-mono text-slate-400" x-text="tr.dateTime"></td>
-                  <td class="p-2.5 font-black text-emerald-400 font-mono" x-text="tr.amount + ' DZD'"></td>
-                  <td class="p-2.5 text-slate-400" x-text="tr.note || '-'"></td>
-                  <td class="p-2.5 text-center">
-                    <button @click="deleteRecord('cabinet_tranches', tr.id)" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                  <td class="p-2.5 font-mono text-slate-500" x-text="tr.dateTime"></td>
+                  <td class="p-2.5 font-black text-emerald-600 font-mono" x-text="tr.amount + ' DZD'"></td>
+                  <td class="p-2.5 text-slate-600" x-text="tr.note || '-'"></td>
+                  <td class="p-2.5 text-center space-x-1">
+                    <button @click="editTranche(tr)" class="text-sky-600 hover:text-sky-800 p-1"><i class="fa-solid fa-pen"></i></button>
+                    <button @click="deleteRecord('cabinet_tranches', tr.id)" class="text-rose-600 hover:text-rose-800 p-1"><i class="fa-solid fa-trash"></i></button>
                   </td>
                 </tr>
               </template>
               <template x-if="currentPatientTranches.length === 0">
-                <tr><td colspan="4" class="p-4 text-center text-slate-500">Aucune tranche versée pour l'instant.</td></tr>
+                <tr><td colspan="4" class="p-4 text-center text-slate-400">Aucune tranche versée pour l'instant.</td></tr>
               </template>
             </tbody>
           </table>
@@ -439,28 +474,28 @@
   </div>
 
   <!-- MODAL PATIENT -->
-  <div x-show="showPatientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
-      <h3 class="font-bold text-sm text-slate-100" x-text="editingPatientId ? 'Modifier Dossier Patient' : 'Nouveau Dossier Patient'"></h3>
+  <div x-show="showPatientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
+      <h3 class="font-bold text-sm text-slate-800" x-text="editingPatientId ? 'Modifier Dossier Patient' : 'Nouveau Dossier Patient'"></h3>
       <div>
-        <label class="block font-bold text-slate-300 mb-1">Nom Complet du Patient</label>
-        <input type="text" x-model="patientForm.name" required class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-700 mb-1">Nom Complet du Patient</label>
+        <input type="text" x-model="patientForm.name" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1">Téléphone</label>
-        <input type="text" x-model="patientForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-700 mb-1">Téléphone</label>
+        <input type="text" x-model="patientForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1">Montant Total des Soins (DZD)</label>
-        <input type="number" x-model.number="patientForm.totalAmount" placeholder="Ex: 50000" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500">
+        <label class="block font-bold text-slate-700 mb-1">Montant Total des Soins (DZD)</label>
+        <input type="number" x-model.number="patientForm.totalAmount" placeholder="Ex: 50000" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
       </div>
       <div>
-        <label class="block font-bold text-slate-300 mb-1">Diagnostic / Notes Médicales</label>
-        <textarea x-model="patientForm.diagnosis" rows="3" class="w-full p-2.5 bg-slate-800/80 border border-slate-700/80 rounded-xl text-slate-100 focus:outline-none focus:border-teal-500"></textarea>
+        <label class="block font-bold text-slate-700 mb-1">Diagnostic / Notes Médicales</label>
+        <textarea x-model="patientForm.diagnosis" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600"></textarea>
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button type="button" @click="showPatientModal = false" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-bold">Annuler</button>
-        <button type="button" @click="savePatient()" class="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-slate-950 rounded-xl font-bold transition">Enregistrer</button>
+        <button type="button" @click="showPatientModal = false" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">Annuler</button>
+        <button type="button" @click="savePatient()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold transition">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -513,15 +548,18 @@
         showPatientModal: false,
         showAppointmentModal: false,
         showTrancheModal: false,
+        showEditTrancheModal: false,
 
         editingPatientId: null,
         editingAppointmentId: null,
         editingChatMsgId: null,
+        editingTrancheId: null,
         selectedPatient: {},
 
         patientForm: { name: '', phone: '', totalAmount: 0, diagnosis: '' },
         appointmentForm: { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 2000 },
         trancheForm: { amount: 0, note: '' },
+        editingTrancheForm: { amount: 0, note: '' },
         chatInput: '',
 
         patients: [],
@@ -673,6 +711,23 @@
           this.trancheForm = { amount: 0, note: '' };
         },
 
+        // MODIFIER UNE TRANCHE DE PAIEMENT
+        editTranche(tr) {
+          this.editingTrancheId = tr.id;
+          this.editingTrancheForm = { amount: tr.amount, note: tr.note || '' };
+          this.showEditTrancheModal = true;
+        },
+        async saveTrancheEdit() {
+          const { db, doc, updateDoc } = window.firebaseService;
+          if (this.editingTrancheId) {
+            await updateDoc(doc(db, "cabinet_tranches", this.editingTrancheId), {
+              amount: Number(this.editingTrancheForm.amount) || 0,
+              note: this.editingTrancheForm.note
+            });
+          }
+          this.showEditTrancheModal = false;
+        },
+
         get todayRevenue() {
           const t = new Date().toISOString().split('T')[0];
           return this.tranches.filter(tr => tr.date === t).reduce((s,tr) => s + (Number(tr.amount)||0), 0);
@@ -756,4 +811,3 @@
   </script>
 </body>
 </html>
-
