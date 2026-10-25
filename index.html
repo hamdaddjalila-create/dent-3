@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestion Cabinet Dentaire Pro</title>
+  <title>Gestion Cabinet Dentaire Pro - dent 3</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -22,7 +22,7 @@
         <div class="inline-flex bg-teal-600 text-white p-4 rounded-2xl shadow-lg shadow-teal-600/30 mb-2">
           <i class="fa-solid fa-tooth text-3xl"></i>
         </div>
-        <h2 class="text-2xl font-black tracking-tight text-slate-900">Cabinet Dentaire</h2>
+        <h2 class="text-2xl font-black tracking-tight text-slate-900">dent 3 - Cabinet</h2>
         <p class="text-xs text-slate-500 font-medium">Connectez-vous à votre espace de gestion</p>
       </div>
 
@@ -65,7 +65,7 @@
             <i class="fa-solid fa-tooth"></i>
           </div>
           <div>
-            <h1 class="font-black text-base text-slate-900 leading-none">Cabinet Dentaire Pro</h1>
+            <h1 class="font-black text-base text-slate-900 leading-none">dent 3 - Pro</h1>
             <p class="text-[11px] text-teal-600 font-semibold mt-1" x-text="userRole === 'doctor' ? 'Compte Médecin (Accès Total)' : 'Compte Assistant (Prise de RDV Uniquement)'"></p>
           </div>
         </div>
@@ -89,7 +89,7 @@
           </button>
         </template>
 
-        <!-- الميزة الجديدة: تحليل الأشعة بالذكاء الاصطناعي -->
+        <!-- ميزة الذكاء الاصطناعي الجديدة -->
         <template x-if="userRole === 'doctor'">
           <button @click="activeTab = 'ai-radio'" :class="activeTab === 'ai-radio' ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'" class="px-4 py-2 rounded-xl transition flex items-center gap-2 whitespace-nowrap">
             <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> IA Radiologie (Assistant)
@@ -111,9 +111,8 @@
     <!-- CONTENU PRINCIPAL -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
-      <!-- AGENDA MENSUEL & RDV -->
+      <!-- 1. AGENDA MENSUEL & RDV -->
       <div x-show="activeTab === 'agenda'" class="space-y-6">
-        <!-- قسم الأجندة الأصلي -->
         <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="font-bold text-slate-900 text-base flex items-center gap-2">
@@ -128,10 +127,135 @@
               </button>
             </div>
           </div>
+
+          <!-- GRILLE DU CALENDRIER -->
+          <div class="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs">
+            <template x-for="day in ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']">
+              <div class="py-2 font-bold text-slate-400 uppercase tracking-wider" x-text="day"></div>
+            </template>
+            <template x-for="blank in calendarBlanks">
+              <div class="h-20 bg-slate-50/50 rounded-2xl border border-slate-100"></div>
+            </template>
+            <template x-for="dateObj in calendarDays" :key="dateObj.dateStr">
+              <div @click="selectCalendarDate(dateObj.dateStr)" 
+                :class="selectedDate === dateObj.dateStr ? 'border-teal-600 bg-teal-50' : 'border-slate-200 bg-white hover:border-slate-300'"
+                class="h-20 p-2 rounded-2xl border transition cursor-pointer flex flex-col justify-between text-left relative overflow-hidden">
+                <span class="font-bold text-xs" :class="dateObj.isToday ? 'bg-teal-600 text-white px-2 py-0.5 rounded-lg' : 'text-slate-500'" x-text="dateObj.dayNum"></span>
+                <div class="space-y-1 overflow-y-auto max-h-12">
+                  <template x-for="app in getAppointmentsForDate(dateObj.dateStr)" :key="app.id">
+                    <div class="bg-teal-100 text-teal-800 text-[10px] p-1 rounded-md truncate font-medium border border-teal-200">
+                      <span class="font-mono font-bold" x-text="app.time"></span> - <span x-text="app.patientName"></span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- LISTE DES RDV DU JOUR SELECTIONNE -->
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm space-y-3 p-5">
+          <h3 class="font-bold text-sm text-slate-800 flex items-center justify-between">
+            <span>Rendez-vous du : <span class="text-teal-600 font-mono" x-text="selectedDate"></span></span>
+            <span class="text-xs bg-slate-100 px-3 py-1 rounded-xl text-slate-600 font-bold" x-text="selectedDateAppointments.length + ' RDV'"></span>
+          </h3>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Heure & Date</th>
+                  <th class="p-3">Patient</th>
+                  <th class="p-3">Téléphone</th>
+                  <th class="p-3">Acte / Soin</th>
+                  <th class="p-3" x-show="userRole === 'doctor'">Prix (DZD)</th>
+                  <th class="p-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="app in selectedDateAppointments" :key="app.id">
+                  <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-mono font-bold text-teal-700" x-text="app.date + ' à ' + app.time"></td>
+                    <td class="p-3 font-bold text-slate-800" x-text="app.patientName"></td>
+                    <td class="p-3 font-mono text-slate-500" x-text="app.phone || '-'"></td>
+                    <td class="p-3 text-slate-600" x-text="app.treatment"></td>
+                    <td class="p-3 font-bold text-emerald-600 font-mono" x-show="userRole === 'doctor'" x-text="app.cost + ' DZD'"></td>
+                    <td class="p-3 text-center space-x-1.5 whitespace-nowrap">
+                      <button x-show="userRole === 'doctor'" @click="convertToPatientDossier(app)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                        <i class="fa-solid fa-user-check"></i> Convertir en dossier
+                      </button>
+                      <button @click="editAppointment(app)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier RDV">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <a :href="getWhatsAppLink(app)" target="_blank" class="bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-2 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                        <i class="fa-brands fa-whatsapp"></i> Rappel
+                      </a>
+                      <button @click="deleteRecord('cabinet_appointments', app.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer RDV"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="selectedDateAppointments.length === 0">
+                  <tr><td colspan="6" class="p-6 text-center text-slate-400 font-medium">Aucun rendez-vous pour cette date.</td></tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <!-- واجهة تحليل الأشعة بالذكاء الاصطناعي الجديدة (AI RADIOLOGY) -->
+      <!-- 2. DOSSIERS PATIENTS & TRANCHES (DOCTOR ONLY) -->
+      <div x-show="activeTab === 'patients' && userRole === 'doctor'" x-cloak class="space-y-4">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+          <div class="relative w-full sm:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400"></i>
+            <input type="text" x-model="patientSearch" placeholder="Rechercher un patient..." 
+              class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-teal-600">
+          </div>
+          <button @click="openPatientModal()" class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-md">
+            <i class="fa-solid fa-user-plus"></i> Nouveau Patient
+          </button>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3.5">Patient</th>
+                  <th class="p-3.5">Téléphone</th>
+                  <th class="p-3.5">Montant Total</th>
+                  <th class="p-3.5">Total Payé</th>
+                  <th class="p-3.5">Reste à Payer</th>
+                  <th class="p-3.5 text-center">Actions & Tranches</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="p in filteredPatients" :key="p.id">
+                  <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3.5 font-bold text-slate-800" x-text="p.name"></td>
+                    <td class="p-3.5 font-mono text-slate-500" x-text="p.phone || '-'"></td>
+                    <td class="p-3.5 font-bold text-slate-700 font-mono" x-text="(p.totalAmount || 0) + ' DZD'"></td>
+                    <td class="p-3.5 font-bold text-emerald-600 font-mono" x-text="getPatientTotalPaid(p.id) + ' DZD'"></td>
+                    <td class="p-3.5 font-bold font-mono" :class="(p.totalAmount - getPatientTotalPaid(p.id)) > 0 ? 'text-rose-600' : 'text-slate-400'" x-text="(p.totalAmount - getPatientTotalPaid(p.id)) + ' DZD'"></td>
+                    <td class="p-3.5 text-center space-x-1.5 whitespace-nowrap">
+                      <button @click="openTrancheModal(p)" class="bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 px-2.5 py-1 rounded-xl text-xs font-bold inline-flex items-center gap-1 transition">
+                        <i class="fa-solid fa-money-bill-transfer"></i> Tranches de paiement
+                      </button>
+                      <button @click="editPatient(p)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier Patient"><i class="fa-solid fa-pen"></i></button>
+                      <button @click="deleteRecord('cabinet_patients', p.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer Patient"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="filteredPatients.length === 0">
+                  <tr><td colspan="6" class="p-8 text-center text-slate-400 font-medium">Aucun patient enregistré.</td></tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ميزة الذكاء الاصطناعي الجديدة (AI RADIOLOGY) -->
       <div x-show="activeTab === 'ai-radio' && userRole === 'doctor'" x-cloak class="space-y-6">
         <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-6">
           <div class="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -212,27 +336,430 @@
         </div>
       </div>
 
+      <!-- 4. FINANCES & RECETTE (DOCTOR ONLY) -->
+      <div x-show="activeTab === 'finances' && userRole === 'doctor'" x-cloak class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">RECETTE DU JOUR (CALCUL AUTOMATIQUE)</p>
+            <h3 class="text-3xl font-black text-emerald-600 mt-2 font-mono" x-text="todayRevenue + ' DZD'">0 DZD</h3>
+            <p class="text-[11px] text-slate-400 mt-1">Calculé à partir des tranches payées aujourd'hui</p>
+          </div>
+
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">TOTAL RECETTE GLOBALE</p>
+            <h3 class="text-3xl font-black text-teal-600 mt-2 font-mono" x-text="totalPayments + ' DZD'">0 DZD</h3>
+            <p class="text-[11px] text-slate-400 mt-1">Total de toutes les tranches encaissées</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm p-5 space-y-3">
+          <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-teal-600"></i> Historique Global des Tranches Encaissées
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3">Patient</th>
+                  <th class="p-3">Montant Tranche</th>
+                  <th class="p-3">Date & Heure exacte</th>
+                  <th class="p-3">Note / Remarque</th>
+                  <th class="p-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="t in tranches" :key="t.id">
+                  <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-bold text-slate-800" x-text="t.patientName"></td>
+                    <td class="p-3 font-black text-emerald-600 font-mono" x-text="t.amount + ' DZD'"></td>
+                    <td class="p-3 font-mono text-slate-500" x-text="t.dateTime"></td>
+                    <td class="p-3 text-slate-600" x-text="t.note || '-'"></td>
+                    <td class="p-3 text-center space-x-2 whitespace-nowrap">
+                      <button @click="editTranche(t)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                      <button @click="deleteRecord('cabinet_tranches', t.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="tranches.length === 0">
+                  <tr><td colspan="5" class="p-6 text-center text-slate-400 font-medium">Aucune tranche encaissée.</td></tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. MESSAGERIE INTERNE -->
+      <div x-show="activeTab === 'chat'" x-cloak class="space-y-4">
+        <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col h-[560px] shadow-sm">
+          <div class="bg-slate-50 border-b border-slate-200 p-4 font-bold text-sm text-slate-800 flex items-center justify-between">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-comments text-teal-600"></i> Messagerie Interne du Cabinet</span>
+            <span class="text-[11px] bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200"><i class="fa-solid fa-volume-high"></i> Alerte Sonore Activée</span>
+          </div>
+
+          <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/50" id="chatContainer">
+            <template x-for="msg in chatMessages" :key="msg.id">
+              <div :class="msg.senderEmail === userEmail ? 'flex justify-end' : 'flex justify-start'">
+                <div :class="msg.senderEmail === userEmail ? 'bg-teal-600 text-white' : 'bg-white text-slate-800 border border-slate-200'" class="max-w-md rounded-2xl p-3 text-xs space-y-1.5 shadow-sm relative group">
+                  <div class="flex justify-between items-center gap-4 text-[10px] opacity-75 font-bold">
+                    <span x-text="msg.senderRole === 'doctor' ? 'Dr. Médecin' : 'Assistant(e)'"></span>
+                    <span x-text="msg.time"></span>
+                  </div>
+                  <p class="font-medium whitespace-pre-wrap text-xs" x-text="msg.text"></p>
+                  
+                  <template x-if="msg.senderEmail === userEmail || userRole === 'doctor'">
+                    <div class="flex justify-end gap-2 text-[10px] pt-1 border-t border-slate-200/40">
+                      <button @click="editChatMessage(msg)" class="hover:underline opacity-90"><i class="fa-solid fa-pen"></i> Modifier</button>
+                      <button @click="deleteRecord('cabinet_chat', msg.id)" class="hover:underline opacity-90 text-rose-300"><i class="fa-solid fa-trash"></i> Supprimer</button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <form @submit.prevent="sendChatMessage()" class="p-3 bg-white border-t border-slate-200 flex gap-2">
+            <input type="text" x-model="chatInput" placeholder="Écrivez votre message ici..." required class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-teal-600">
+            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-3 rounded-xl font-bold text-xs transition shadow-md flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> Envoyer
+            </button>
+          </form>
+        </div>
+      </div>
+
     </main>
   </div>
 
+  <!-- MODALS -->
+  <!-- MODAL RDV -->
+  <div x-show="showAppointmentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs">
+      <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-plus text-teal-600"></i> <span x-text="editingAppointmentId ? 'Modifier le RDV' : 'Prise de Rendez-vous'"></span>
+      </h3>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Nom du Patient</label>
+        <input type="text" x-model="appointmentForm.patientName" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+      </div>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Numéro Téléphone</label>
+        <input type="text" x-model="appointmentForm.phone" placeholder="05XXXXXXXX" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Date exacte</label>
+          <input type="date" x-model="appointmentForm.date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Heure exacte</label>
+          <input type="time" x-model="appointmentForm.time" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+        </div>
+      </div>
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Soin / Traitement</label>
+        <input type="text" x-model="appointmentForm.treatment" placeholder="Extraction, Détartrage..." required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+      </div>
+      <div x-show="userRole === 'doctor'">
+        <label class="block font-bold text-slate-700 mb-1">Prix Estimé (DZD)</label>
+        <input type="number" x-model.number="appointmentForm.cost" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-teal-600">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" @click="showAppointmentModal = false" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold">Annuler</button>
+        <button type="button" @click="saveAppointment()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold transition">Enregistrer RDV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TRANCHES DE PAIEMENT POUR UN PATIENT -->
+  <div x-show="showTrancheModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-lg p-6 space-y-5 text-xs max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+        <h3 class="font-bold text-sm text-teal-600 flex items-center gap-2">
+          <i class="fa-solid fa-money-bill-wave"></i> Suivi des Tranches de Paiement
+        </h3>
+        <button @click="showTrancheModal = false" class="text-slate-400 hover:text-slate-600 font-bold"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+        <p class="font-bold text-slate-800">Patient: <span class="text-teal-600" x-text="selectedPatient.name"></span></p>
+        <div class="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1 border-t border-slate-200">
+          <div>Total: <span class="font-bold text-slate-800" x-text="(selectedPatient.totalAmount || 0) + ' DZD'"></span></div>
+          <div>Payé: <span class="font-bold text-emerald-600" x-text="getPatientTotalPaid(selectedPatient.id) + ' DZD'"></span></div>
+          <div>Reste: <span class="font-bold text-rose-600" x-text="((selectedPatient.totalAmount || 0) - getPatientTotalPaid(selectedPatient.id)) + ' DZD'"></span></div>
+        </div>
+      </div>
+
+      <form @submit.prevent="addTrancheForPatient()" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+        <h4 class="font-bold text-slate-800">Ajouter une nouvelle tranche payée</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-600 mb-1">Montant Tranche (DZD)</label>
+            <input type="number" x-model.number="trancheForm.amount" required class="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-800">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-600 mb-1">Note / Remarque</label>
+            <input type="text" x-model="trancheForm.note" placeholder="Versement 1..." class="w-full p-2 bg-white border border-slate-200 rounded-xl text-slate-800">
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl font-bold transition flex items-center justify-center gap-1">
+          <i class="fa-solid fa-plus"></i> Enregistrer la tranche (Date & Heure auto)
+        </button>
+      </form>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-600">Historique des tranches versées</h4>
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <table class="w-full text-left">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-2.5">Date & Heure</th>
+                <th class="p-2.5">Montant Versé</th>
+                <th class="p-2.5">Note</th>
+                <th class="p-2.5 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <template x-for="tr in currentPatientTranches" :key="tr.id">
+                <tr>
+                  <td class="p-2.5 font-mono text-slate-500" x-text="tr.dateTime"></td>
+                  <td class="p-2.5 font-black text-emerald-600 font-mono" x-text="tr.amount + ' DZD'"></td>
+                  <td class="p-2.5 text-slate-600" x-text="tr.note || '-'"></td>
+                  <td class="p-2.5 text-center space-x-1.5 whitespace-nowrap">
+                    <button @click="editTranche(tr)" class="text-sky-600 hover:text-sky-800 p-1 font-bold" title="Modifier la tranche">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button @click="deleteRecord('cabinet_tranches', tr.id)" class="text-rose-600 hover:text-rose-800 p-1 font-bold" title="Supprimer la tranche">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </template>
+              <template x-if="currentPatientTranches.length === 0">
+                <tr><td colspan="4" class="p-4 text-center text-slate-400">Aucune tranche pour ce patient.</td></tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT ALPINE.JS & APP LOGIC -->
   <script>
     function dentalApp() {
       return {
         isAuthenticated: true,
         userRole: 'doctor', // 'doctor' ou 'assistant'
         userEmail: 'medecin3@clinic.com',
-        activeTab: 'agenda',
+        loginEmail: '',
+        loginPassword: '',
+        authError: '',
         isLoading: false,
-        
-        // المتغيرات الخاصة بميزة الذكاء الاصطناعي
+        activeTab: 'agenda',
+
+        // الأجندة والتقويم
+        currentDate: new Date(),
+        selectedDate: new Date().toISOString().split('T')[0],
+        appointments: [
+          { id: '1', patientName: 'Mohamed Ali', phone: '0550123456', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: 'Détartrage', cost: 4000 }
+        ],
+        showAppointmentModal: false,
+        editingAppointmentId: null,
+        appointmentForm: { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 0 },
+
+        // المرضى والترانشات
+        patients: [
+          { id: 'p1', name: 'Mohamed Ali', phone: '0550123456', totalAmount: 15000 }
+        ],
+        patientSearch: '',
+        showPatientModal: false,
+        showTrancheModal: false,
+        selectedPatient: {},
+        tranches: [
+          { id: 't1', patientId: 'p1', patientName: 'Mohamed Ali', amount: 5000, dateTime: '24/10/2026 10:30', note: 'Avance 1' }
+        ],
+        trancheForm: { amount: '', note: '' },
+
+        // ميزة الذكاء الاصطناعي للأشعة
         uploadedImageUrl: null,
         isAnalyzing: false,
         aiAnalysisResult: null,
 
+        // الدردشة الداخلية
+        chatMessages: [
+          { id: 'm1', senderEmail: 'medecin3@clinic.com', senderRole: 'doctor', text: 'Bonjour, prêt pour la journée !', time: '08:00' }
+        ],
+        chatInput: '',
+
         initApp() {
-          console.log("App initialized");
+          console.log("dent 3 App Initialized successfully");
         },
 
+        login() {
+          if(this.loginEmail.includes('assistant')) {
+            this.userRole = 'assistant';
+          } else {
+            this.userRole = 'doctor';
+          }
+          this.userEmail = this.loginEmail || 'medecin3@clinic.com';
+          this.isAuthenticated = true;
+        },
+
+        logout() {
+          this.isAuthenticated = false;
+        },
+
+        // تقويم الأجندة
+        get currentMonthName() {
+          return this.currentDate.toLocaleString('fr-FR', { month: 'long' });
+        },
+        get currentYear() {
+          return this.currentDate.getFullYear();
+        },
+        get calendarBlanks() {
+          const year = this.currentDate.getFullYear();
+          const month = this.currentDate.getMonth();
+          const firstDay = new Date(year, month, 1).getDay();
+          return firstDay === 0 ? 6 : firstDay - 1;
+        },
+        get calendarDays() {
+          const year = this.currentDate.getFullYear();
+          const month = this.currentDate.getMonth();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          let days = [];
+          const todayStr = new Date().toISOString().split('T')[0];
+          for (let i = 1; i <= daysInMonth; i++) {
+            let m = String(month + 1).padStart(2, '0');
+            let d = String(i).padStart(2, '0');
+            let dateStr = `${year}-${m}-${d}`;
+            days.push({
+              dayNum: i,
+              dateStr: dateStr,
+              isToday: dateStr === todayStr
+            });
+          }
+          return days;
+        },
+        prevMonth() {
+          this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() - 1, 1);
+        },
+        nextMonth() {
+          this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
+        },
+        selectCalendarDate(dateStr) {
+          this.selectedDate = dateStr;
+        },
+        getAppointmentsForDate(dateStr) {
+          return this.appointments.filter(app => app.date === dateStr);
+        },
+        get selectedDateAppointments() {
+          return this.getAppointmentsForDate(this.selectedDate);
+        },
+        openAppointmentModal() {
+          this.editingAppointmentId = null;
+          this.appointmentForm = { patientName: '', phone: '', date: this.selectedDate, time: '09:00', treatment: '', cost: 0 };
+          this.showAppointmentModal = true;
+        },
+        saveAppointment() {
+          if(this.editingAppointmentId) {
+            let app = this.appointments.find(a => a.id === this.editingAppointmentId);
+            if(app) {
+              Object.assign(app, this.appointmentForm);
+            }
+          } else {
+            this.appointments.push({
+              id: Date.now().toString(),
+              ...this.appointmentForm
+            });
+          }
+          this.showAppointmentModal = false;
+        },
+        editAppointment(app) {
+          this.editingAppointmentId = app.id;
+          this.appointmentForm = { ...app };
+          this.showAppointmentModal = true;
+        },
+        getWhatsAppLink(app) {
+          return `https://wa.me/${app.phone}?text=Bonjour%20${app.patientName},%20rappel%20de%20votre%20rendez-vous%20le%20${app.date}%20à%20${app.time}`;
+        },
+        convertToPatientDossier(app) {
+          let exists = this.patients.find(p => p.name.toLowerCase() === app.patientName.toLowerCase());
+          if(!exists) {
+            this.patients.push({
+              id: 'p_' + Date.now(),
+              name: app.patientName,
+              phone: app.phone || '',
+              totalAmount: app.cost || 5000
+            });
+            alert('Patient converti en dossier avec succès !');
+          } else {
+            alert('Ce patient possède déjà un dossier.');
+          }
+        },
+
+        // إدارة المرضى
+        get filteredPatients() {
+          if(!this.patientSearch) return this.patients;
+          return this.patients.filter(p => p.name.toLowerCase().includes(this.patientSearch.toLowerCase()));
+        },
+        openPatientModal() {
+          let name = prompt("Nom du nouveau patient :");
+          if(name) {
+            let phone = prompt("Numéro de téléphone :") || '';
+            let total = parseFloat(prompt("Montant total du traitement (DZD) :") || '0');
+            this.patients.push({ id: 'p_' + Date.now(), name, phone, totalAmount: total });
+          }
+        },
+        editPatient(p) {
+          let newName = prompt("Modifier le nom :", p.name);
+          if(newName) p.name = newName;
+        },
+        openTrancheModal(p) {
+          this.selectedPatient = p;
+          this.showTrancheModal = true;
+        },
+        getPatientTotalPaid(patientId) {
+          return this.tranches.filter(t => t.patientId === patientId).reduce((sum, t) => sum + t.amount, 0);
+        },
+        // التصحيح هنا: تحويلها إلى Getters لتجنب أخطاء العرض
+        get currentPatientTranches() {
+          return this.tranches.filter(t => t.patientId === this.selectedPatient.id);
+        },
+        addTrancheForPatient() {
+          if(!this.trancheForm.amount) return;
+          let now = new Date();
+          let dateStr = String(now.getDate()).padStart(2, '0') + '/' + String(now.getMonth() + 1).padStart(2, '0') + '/' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+          this.tranches.push({
+            id: 't_' + Date.now(),
+            patientId: this.selectedPatient.id,
+            patientName: this.selectedPatient.name,
+            amount: parseFloat(this.trancheForm.amount),
+            dateTime: dateStr,
+            note: this.trancheForm.note || ''
+          });
+          this.trancheForm = { amount: '', note: '' };
+        },
+
+        // المالية
+        get todayRevenue() {
+          let now = new Date();
+          let d = String(now.getDate()).padStart(2, '0');
+          let m = String(now.getMonth() + 1).padStart(2, '0');
+          let y = now.getFullYear();
+          let todayPrefix = `${d}/${m}/${y}`;
+          return this.tranches.filter(t => t.dateTime.startsWith(todayPrefix)).reduce((sum, t) => sum + t.amount, 0);
+        },
+        get totalPayments() {
+          return this.tranches.reduce((sum, t) => sum + t.amount, 0);
+        },
+        editTranche(t) {
+          let amt = prompt("Modifier le montant de la tranche (DZD) :", t.amount);
+          if(amt) t.amount = parseFloat(amt);
+        },
+
+        // ميزة تحليل الأشعة بالذكاء الاصطناعي
         handleImageUpload(event) {
           const file = event.target.files[0];
           if (file) {
@@ -244,16 +771,13 @@
             reader.readAsDataURL(file);
           }
         },
-
-        async analyzeRadioWithAI() {
+        analyzeRadioWithAI() {
           if (!this.uploadedImageUrl) return;
           this.isAnalyzing = true;
           this.aiAnalysisResult = null;
 
-          try {
-            // محاكاة الاتصال برابط Gemini API عبر Firebase Functions
-            setTimeout(() => {
-              this.aiAnalysisResult = `🔍 OBSERVATIONS RADIOGRAPHIQUES:
+          setTimeout(() => {
+            this.aiAnalysisResult = `🔍 OBSERVATIONS RADIOGRAPHIQUES:
 • Dent #36 : Zone d'ombre suspecte au niveau coronaire suggérant une carie dentinaire profonde.
 • Zone Périapicale : Légère clarté périapicale à vérifier sur la racine distale.
 • Perte Osseuse : Niveau d'os alvéolaire dans les limites normales.
@@ -265,16 +789,42 @@
 💊 PRESCRIPTIONS COURANTES ASSOCIÉES (À VALIDER) :
 - Antalgique : Paracétamol 1g si douleur.
 - Bain de bouche antiseptique (Chlorhexidine 0.12%).`;
-              this.isAnalyzing = false;
-            }, 2500);
-
-          } catch (error) {
-            console.error(error);
-            this.aiAnalysisResult = "Erreur lors de l'analyse de la radiographie. Veuillez réessayer.";
             this.isAnalyzing = false;
+          }, 2500);
+        },
+
+        // الدردشة الداخلية
+        sendChatMessage() {
+          if(!this.chatInput.trim()) return;
+          this.chatMessages.push({
+            id: 'm_' + Date.now(),
+            senderEmail: this.userEmail,
+            senderRole: this.userRole,
+            text: this.chatInput,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+          this.chatInput = '';
+        },
+        editChatMessage(msg) {
+          let newText = prompt("Modifier votre message :", msg.text);
+          if(newText !== null) msg.text = newText;
+        },
+
+        // حذف عام لأي سجل
+        deleteRecord(type, id) {
+          if(confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
+            if(type === 'cabinet_appointments') {
+              this.appointments = this.appointments.filter(a => a.id !== id);
+            } else if(type === 'cabinet_patients') {
+              this.patients = this.patients.filter(p => p.id !== id);
+            } else if(type === 'cabinet_tranches') {
+              this.tranches = this.tranches.filter(t => t.id !== id);
+            } else if(type === 'cabinet_chat') {
+              this.chatMessages = this.chatMessages.filter(m => m.id !== id);
+            }
           }
         }
-      };
+      }
     }
   </script>
 </body>
