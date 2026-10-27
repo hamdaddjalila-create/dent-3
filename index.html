@@ -559,34 +559,38 @@
         isLoading: false,
         activeTab: 'agenda',
 
-        // الأجندة والتقويم
-        currentDate: new Date(),
-        selectedDate: new Date().toISOString().split('T')[0],
-        appointments: [
-          { id: '1', patientName: 'Mohamed Ali', phone: '0550123456', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: 'Détartrage', cost: 4000 }
-        ],
-        showAppointmentModal: false,
-        editingAppointmentId: null,
-        appointmentForm: { patientName: '', phone: '', date: new Date().toISOString().split('T')[0], time: '09:00', treatment: '', cost: 0 },
-
-        // المرضى والترانشات
-        patients: [
-          { id: 'p1', name: 'Mohamed Ali', phone: '0550123456', totalAmount: 15000 }
-        ],
-        patientSearch: '',
-        showPatientModal: false,
-        showTrancheModal: false,
-        selectedPatient: {},
-        tranches: [
-          { id: 't1', patientId: 'p1', patientName: 'Mohamed Ali', amount: 5000, dateTime: '24/10/2026 10:30', note: 'Avance 1' }
-        ],
-        trancheForm: { amount: '', note: '' },
+      // الأجندة والتقويم //
+currentDate: new Date(),
+selectedDate: new Date().toISOString().split('T')[0],
+appointments: [],
+showAppointmentModal: false,
+editingAppointmentId: null,
+appointmentForm: { patientName: '', phone: '', date: '', time: '09:00', treatment: '', cost: 0 },
+     // المرضى والترانشات //
+patients: [],
+patientSearch: '',
+showPatientModal: false,
+showTrancheModal: false,
+selectedPatient: {},
+tranches: [],
+trancheForm: { amount: '', note: '' },
 
         // ميزة الذكاء الاصطناعي للأشعة
         uploadedImageUrl: null,
         isAnalyzing: false,
         aiAnalysisResult: null,
-
+<!-- أزرار التحكم تحت نتيجة الذكاء الاصطناعي -->
+<div class="flex items-center gap-3 mt-4">
+    <!-- زر الحذف -->
+    <button @click="uploadedImageUrl = null; aiAnalysisResult = null;" class="px-4 py-2 bg-red-50 text-red-600 rounded-lg">
+        🗑️ حذف الصورة
+    </button>
+    
+    <!-- زر التحويل إلى ملف المريض -->
+    <button @click="alert('Saved to patient file successfully!')" class="px-4 py-2 bg-emerald-600 text-white rounded-lg">
+        📁 تحويل إلى ملف المريض
+    </button>
+</div>
         // الدردشة الداخلية
         chatMessages: [
           { id: 'm1', senderEmail: 'medecin3@clinic.com', senderRole: 'doctor', text: 'Bonjour, prêt pour la journée !', time: '08:00' }
